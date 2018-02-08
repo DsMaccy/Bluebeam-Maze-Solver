@@ -1,11 +1,12 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace UnitTester
+namespace MazeTester
 {
     [TestClass]
     public class TestMain
     {
+        
         [ClassInitialize]
         public void Initialize()
         {
