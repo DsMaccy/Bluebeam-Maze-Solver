@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace Bluebeam_Maze_Solver
 {
-    enum MazeValues
+    enum MazeValue
     {
         Wall,
         OpenSpace,

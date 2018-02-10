@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -53,6 +54,12 @@
     <Compile Include="FileSystemConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestMain.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bluebeam Maze Solver\Bluebeam Maze Solver.csproj">
+      <Project>{ff516a08-7189-44fd-b9f9-71079db45726}</Project>
+      <Name>Bluebeam Maze Solver</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
