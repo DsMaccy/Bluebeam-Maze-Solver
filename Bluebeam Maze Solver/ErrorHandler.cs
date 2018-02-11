@@ -14,9 +14,19 @@ namespace Bluebeam_Maze_Solver
             {
                 case ExitCode.BAD_INPUT:
                     Console.WriteLine("The source file provided was not properly formatted.\n" +
-                                        "Please make sure the image has only the colors black, white, red and blue.\n" +
-                                        "All of these colors except for black are required.\n" +
-                                        "Also, please make sure that the file is in a supported format.");
+                                      "\tPlease make sure the file exists and is in the correct format\n" +
+                                      "\tPlease make sure the image has only black, white, red and blue colors.\n" +
+                                      "\t(All of these colors except for black are required).");
+                    break;
+                case ExitCode.UNSOLVEABLE:
+                    Console.WriteLine("The provided maze has no valid solution.\n");
+                    break;
+                case ExitCode.INVALID_OUTPUT_PATH:
+                    Console.WriteLine("The output path provided is invalid.\n" +
+                                      "\tPlease check that the parent directory exists.\n" +
+                                      "\tPlease also be sure that the output file does not already exist");
+                    break;
+                case ExitCode.GOOD:
                     break;
                 default:
                     throw new NotImplementedException();
@@ -25,7 +35,7 @@ namespace Bluebeam_Maze_Solver
 
         public static void PrintUsage()
         {
-            Console.WriteLine("maze.exe <source_image> <destination_image>");
+            Console.WriteLine("Usage: maze.exe <source_image> <destination_image>");
             Console.WriteLine();
             Console.WriteLine("Supported file types: ");
             Console.WriteLine("\t.png");
@@ -36,7 +46,10 @@ namespace Bluebeam_Maze_Solver
             Console.WriteLine("This program will take as input a maze and produce a copied image that has a path in the maze filled out in green");
             Console.WriteLine("Input prerequisites: ");
             Console.WriteLine("\tThe maze should only have the colors: ");
-            Console.WriteLine("\t\tblack (0, 0, 0), white (255, 255, 255), red (255, 0, 0) and blue (0, 0, 255)");
+            Console.WriteLine("\t\tblack (0, 0, 0)");
+            Console.WriteLine("\t\twhite (255, 255, 255)");
+            Console.WriteLine("\t\tred (255, 0, 0)");
+            Console.WriteLine("\t\tblue (0, 0, 255)");
         }
     }
 }

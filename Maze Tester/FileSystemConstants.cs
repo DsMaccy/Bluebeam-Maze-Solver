@@ -8,10 +8,11 @@ namespace MazeTester
 {
     class FileSystemConstants
     {
-        public const string TEMP_FOLDER = "tmp";
-        public const string GOOD_IMAGES_FOLDER = "Good Images";
+        public const string EXECUTABLE_NAME = "maze.exe";
         public const string BAD_IMAGES_FOLDER = "Bad Images";
         public const string OUTPUT_FOLDER = "Output_Results";
-
+        public const string UNSOLVEABLE_MAZES_FOLDER = "Unsolveable Mazes";
+        public const string SMALL_MAZES_FOLDER = "Small Mazes";
+        public const string LARGE_MAZES_FOLDER = "Large Mazes";
     }
 }
