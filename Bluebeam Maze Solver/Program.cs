@@ -33,20 +33,30 @@ namespace Bluebeam_Maze_Solver
             }
 
 
-            // 
-            MazeParser parser = new MazeParser(source_file_name);
-            MazeSolver solver = new DummySolver();
-
-            solver.solve(parser.Maze);
-            if (parser.GenerateFile(destination_file_name))
+            try
             {
-                Console.WriteLine("Solution maze has been successfully created.");
-                return (int)ExitCode.GOOD;
-            }
+                MazeParser parser = new MazeParser(source_file_name);
+                MazeSolver solver = new DummySolver();
 
-            ErrorHandler.HandleError(ExitCode.INVALID_OUTPUT_PATH);
-            return (int)ExitCode.INVALID_OUTPUT_PATH;
-            
+                if (!solver.solve(parser.Maze))
+                {
+                    ErrorHandler.HandleError(ExitCode.UNSOLVEABLE);
+                    return (int)ExitCode.UNSOLVEABLE;
+                }
+                if (parser.GenerateFile(destination_file_name))
+                {
+                    Console.WriteLine("Solution maze has been successfully created.");
+                    return (int)ExitCode.GOOD;
+                }
+
+                ErrorHandler.HandleError(ExitCode.INVALID_OUTPUT_PATH);
+                return (int)ExitCode.INVALID_OUTPUT_PATH;
+            }
+            catch (BadImageFormatException)
+            {
+                ErrorHandler.HandleError(ExitCode.BAD_INPUT);
+                return (int)ExitCode.BAD_INPUT;
+            }            
         }
     }
 }

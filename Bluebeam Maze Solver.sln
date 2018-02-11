@@ -6,6 +6,15 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bluebeam Maze Solver", "Bluebeam Maze Solver\Bluebeam Maze Solver.csproj", "{FF516A08-7189-44FD-B9F9-71079DB45726}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maze Tester", "Maze Tester\Maze Tester.csproj", "{EDC31F7A-50F6-40CB-BBB9-E7A5871ED190}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DFF61C2B-34BF-462A-B5D5-EB43CD3C577E} = {DFF61C2B-34BF-462A-B5D5-EB43CD3C577E}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MazeGenerator", "MazeGenerator\MazeGenerator.csproj", "{DFF61C2B-34BF-462A-B5D5-EB43CD3C577E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maze Generator UI", "MazeGeneratorUI\Maze Generator UI.csproj", "{0B3B2A24-6689-4374-AD06-3FFBF69BFBDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary1", "ClassLibrary1\ClassLibrary1.csproj", "{76B18BA1-D8F0-4780-AA72-82C38792E72A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +30,18 @@ Global
 		{EDC31F7A-50F6-40CB-BBB9-E7A5871ED190}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDC31F7A-50F6-40CB-BBB9-E7A5871ED190}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDC31F7A-50F6-40CB-BBB9-E7A5871ED190}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFF61C2B-34BF-462A-B5D5-EB43CD3C577E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFF61C2B-34BF-462A-B5D5-EB43CD3C577E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFF61C2B-34BF-462A-B5D5-EB43CD3C577E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFF61C2B-34BF-462A-B5D5-EB43CD3C577E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B3B2A24-6689-4374-AD06-3FFBF69BFBDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B3B2A24-6689-4374-AD06-3FFBF69BFBDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B3B2A24-6689-4374-AD06-3FFBF69BFBDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B3B2A24-6689-4374-AD06-3FFBF69BFBDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76B18BA1-D8F0-4780-AA72-82C38792E72A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76B18BA1-D8F0-4780-AA72-82C38792E72A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76B18BA1-D8F0-4780-AA72-82C38792E72A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76B18BA1-D8F0-4780-AA72-82C38792E72A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

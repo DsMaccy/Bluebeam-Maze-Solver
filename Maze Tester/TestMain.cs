@@ -155,7 +155,6 @@ namespace MazeTester
                 Bitmap oldImage = Bitmap.FromFile(filename) as Bitmap;
                 System.Diagnostics.Process proc = System.Diagnostics.Process.Start(FileSystemConstants.EXECUTABLE_NAME, arguments);
                 proc.WaitForExit();
-                Console.WriteLine(proc.StandardOutput);
                 Bitmap newImage = Bitmap.FromFile(filename) as Bitmap;
                 Assert.IsTrue(proc.ExitCode == (int)ExitCode.INVALID_OUTPUT_PATH);
                 Assert.IsFalse(ImageChanged(oldImage, newImage));

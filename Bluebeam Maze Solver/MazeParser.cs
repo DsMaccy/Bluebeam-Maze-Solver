@@ -29,6 +29,16 @@ namespace Bluebeam_Maze_Solver
         {
             img = Bitmap.FromFile(filename) as Bitmap;
             maze = new MazeValue[img.Width, img.Width];
+            for (int i = 0; i < img.Width; i++)
+            {
+                for (int j = 0; j < img.Height; j++)
+                {
+                    if (!ColorMap.REVERSE_MAPPING.TryGetValue(img.GetPixel(i, j), out maze[i, j]))
+                    {
+                        throw new BadImageFormatException("The image has an unrecognized color");
+                    }
+                }
+            }
         }
 
         /// <summary>
