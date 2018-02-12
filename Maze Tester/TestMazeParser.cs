@@ -13,15 +13,9 @@ namespace MazeTester
     public class TestMazeParser
     {
         [TestMethod]
-        public void TestPureGreenFile()
-        {
-            string filename = Path.Combine(FileSystemConstants.PARSE_TEST_FOLDER, "pure_green.bmp");
-            MazeParser mp = new MazeParser(filename);
-        }
-        [TestMethod]
         public void TestPureBlueFile()
         {
-            string filename = Path.Combine(FileSystemConstants.PARSE_TEST_FOLDER, "pure_green.bmp");
+            string filename = Path.Combine(FileSystemConstants.PARSE_TEST_FOLDER, "pure_blue.bmp");
             MazeParser mp = new MazeParser(filename);
             for (int i = 0; i < mp.Maze.GetLength(0); i++)
             {
@@ -62,6 +56,7 @@ namespace MazeTester
         {
             string filename = Path.Combine(FileSystemConstants.PARSE_TEST_FOLDER, "pure_white.png");
             MazeParser mp = new MazeParser(filename);
+
             for (int i = 0; i < mp.Maze.GetLength(0); i++)
             {
                 for (int j = 0; j < mp.Maze.GetLength(1); j++)
@@ -79,19 +74,22 @@ namespace MazeTester
             {
                 for (int j = 0; j < mp.Maze.GetLength(1); j++)
                 {
-                    switch (j % 4)
+                    switch (i % 4)
                     {
                         case 0:
                             Assert.IsTrue(mp.Maze[i, j] == MazeValue.Wall);
                             break;
                         case 1:
-                            Assert.IsTrue(mp.Maze[i, j] == MazeValue.OpenSpace);
-                            break;
-                        case 2:
                             Assert.IsTrue(mp.Maze[i, j] == MazeValue.End);
                             break;
-                        case 3:
+                        case 2:
                             Assert.IsTrue(mp.Maze[i, j] == MazeValue.Start);
+                            break;
+                        case 3:
+                            Assert.IsTrue(mp.Maze[i, j] == MazeValue.OpenSpace);
+                            break;
+                        default:
+                            Assert.Fail();
                             break;
                     }                    
                 }

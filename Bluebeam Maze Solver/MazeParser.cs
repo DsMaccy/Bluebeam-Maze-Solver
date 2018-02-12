@@ -26,7 +26,7 @@ namespace Bluebeam_Maze_Solver
 
         private void TranslateImageToMazeArray()
         {
-            maze = new MazeValue[img.Width, img.Width];
+            maze = new MazeValue[img.Width, img.Height];
             for (int i = 0; i < img.Width; i++)
             {
                 for (int j = 0; j < img.Height; j++)
@@ -48,10 +48,15 @@ namespace Bluebeam_Maze_Solver
 
         public MazeParser(string filename)
         {
-            img = new Bitmap(filename);
+            try
+            {
+                img = new Bitmap(filename);
+            }
+            catch (Exception)
+            {
+                throw new BadImageFormatException("Image either non existent or not in the correct format: " + filename);
+            }
             TranslateImageToMazeArray();
-
-
         }
 
         /// <summary>
