@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Bluebeam_Maze_Solver
 {
-    interface MazeSolver
+    public interface MazeSolver
     {
         /// <summary>
         /// Finds a path from the starting set (blue colored pixels) to the ending set (red colored pixels)

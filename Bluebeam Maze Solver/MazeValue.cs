@@ -17,24 +17,24 @@ namespace Bluebeam_Maze_Solver
     }
     public class ColorMap
     {
-        public static readonly Dictionary<MazeValue, Color> MAPPING;
-        public static readonly Dictionary<Color, MazeValue> REVERSE_MAPPING;
+        public static readonly Dictionary<MazeValue, int> MAPPING;
+        public static readonly Dictionary<int, MazeValue> REVERSE_MAPPING;
 
         static ColorMap()
         {
-            MAPPING = new Dictionary<MazeValue, Color>();
-            MAPPING[MazeValue.Wall] = Color.Black;
-            MAPPING[MazeValue.Start] = Color.Blue;
-            MAPPING[MazeValue.Path] = Color.Green;
-            MAPPING[MazeValue.OpenSpace] = Color.White;
-            MAPPING[MazeValue.End] = Color.Red;
+            MAPPING = new Dictionary<MazeValue, int>();
+            MAPPING[MazeValue.Wall] = Color.Black.ToArgb();
+            MAPPING[MazeValue.Start] = Color.Blue.ToArgb();
+            MAPPING[MazeValue.Path] = Color.Green.ToArgb();
+            MAPPING[MazeValue.OpenSpace] = Color.White.ToArgb();
+            MAPPING[MazeValue.End] = Color.Red.ToArgb();
 
-            REVERSE_MAPPING = new Dictionary<Color, MazeValue>();
-            REVERSE_MAPPING[Color.Black] = MazeValue.Wall;
-            REVERSE_MAPPING[Color.Blue] = MazeValue.Start;
-            REVERSE_MAPPING[Color.Green] = MazeValue.Path;
-            REVERSE_MAPPING[Color.White] = MazeValue.OpenSpace;
-            REVERSE_MAPPING[Color.Red] = MazeValue.End;
+            REVERSE_MAPPING = new Dictionary<int, MazeValue>();
+            REVERSE_MAPPING[Color.Black.ToArgb()] = MazeValue.Wall;
+            REVERSE_MAPPING[Color.Blue.ToArgb()] = MazeValue.Start;
+            REVERSE_MAPPING[Color.Green.ToArgb()] = MazeValue.Path;
+            REVERSE_MAPPING[Color.White.ToArgb()] = MazeValue.OpenSpace;
+            REVERSE_MAPPING[Color.Red.ToArgb()] = MazeValue.End;
         }
     }
 }

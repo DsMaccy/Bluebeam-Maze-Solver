@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using MazeGenerator.Properties;
 
 namespace MazeGenerator
 {
@@ -19,12 +20,21 @@ namespace MazeGenerator
     {
 
         private Bitmap image;
+        private int expectedShortestPath;
 
-        public Image Image
+        public Bitmap Image
         {
             get
             {
                 return image;
+            }
+        }
+
+        public int ExpectedShortestPath
+        {
+            get
+            {
+                return 0;
             }
         }
 
@@ -33,16 +43,17 @@ namespace MazeGenerator
             switch(size)
             {
                 case ImageSize.VerySmall:
-                    image = Bitmap.FromFile("Blank Image Tiny.bmp") as Bitmap;
+                    //image = Bitmap.FromResource(MazeGenerator);
+                    image = new Bitmap(Resources.Blank_Image_Tiny);
                     break;
                 case ImageSize.Small:
-                    image = Bitmap.FromFile("Blank Image Small.bmp") as Bitmap;
+                    image = new Bitmap(Resources.Blank_Image_Small);
                     break;
                 case ImageSize.Medium:
-                    image = Bitmap.FromFile("Blank Image Medium.bmp") as Bitmap;
+                    image = new Bitmap(Resources.Blank_Image_Medium);
                     break;
                 case ImageSize.Large:
-                    image = Bitmap.FromFile("Blank Image Large.bmp") as Bitmap;
+                    image = new Bitmap(Resources.Blank_Image_Large);
                     break;
                 default:
                     throw new NotImplementedException();
@@ -64,7 +75,7 @@ namespace MazeGenerator
             {
                 for (int j = 0; j < image.Height; j++)
                 {
-                    if (i % 2 == 0 && j % 2 == 0)
+                    if (i % 2 == 1 && j % 2 == 1)
                     {
                         image.SetPixel(i, j, Color.White);
                     }
@@ -111,6 +122,7 @@ namespace MazeGenerator
         private void ThirdPassOpenPath()
         {
             // Skip by two in each direction to get to the center of each grid cell
+            Random rngesus = new Random();
             bool forward_pass = true;
             for (int i = 1; i < image.Width; i += 2)
             {
@@ -118,20 +130,52 @@ namespace MazeGenerator
                 {
                     for (int j = 1; j < image.Height; j += 2)
                     {
-                        // TODO
+                        double roll = rngesus.NextDouble();
+                        if (roll < 0.5 && i + 2 < image.Width)
+                        {
+                            if (image.GetPixel(i + 1, j).ToArgb() == Color.Black.ToArgb())
+                            {
+                                image.SetPixel(i + 1, j, Color.White);
+                            }
+                        }
+                        if (roll >= 0.4 && roll < 0.9 && j + 2 < image.Height)
+                        {
+                            if (image.GetPixel(i, j + 1).ToArgb() == Color.Black.ToArgb())
+                            {
+                                image.SetPixel(i, j + 1, Color.White);
+                            }
+                        }
                     }
                 }
                 else
                 {
                     for (int j = image.Height - 2; j > 0; j -= 2)
                     {
-                        // TODO
+                        
+                        double roll = rngesus.NextDouble();
+                        if (roll < 0.5 && i + 2 < image.Width)
+                        {
+                            if (image.GetPixel(i + 1, j).ToArgb() == Color.Black.ToArgb())
+                            {
+                                image.SetPixel(i + 1, j, Color.White);
+                            }
+                        }
+                        if (roll >= 0.4 && roll < 0.9 && j - 2 >= 0)
+                        {
+                            if (image.GetPixel(i, j - 1).ToArgb() == Color.Black.ToArgb())
+                            {
+                                image.SetPixel(i, j - 1, Color.White);
+                            }
+                        }
                     }
                 }
                 forward_pass = !forward_pass;
             }
 
             // TODO: Final modifications to make sure maze is solveable
+
+            // TODO: Modify the expected shortest path
+            // expectedShortestPath = ...
         }
 
         #endregion

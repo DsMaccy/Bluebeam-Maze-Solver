@@ -8,11 +8,10 @@ using System.IO;
 
 namespace Bluebeam_Maze_Solver
 {
-    class MazeParser
+    public class MazeParser
     {
         #region Private Instance Variables
         private Bitmap img;
-        private GraphicsUnit parse_units = GraphicsUnit.Pixel;
         private MazeValue[,] maze;
         
         #endregion
@@ -25,20 +24,34 @@ namespace Bluebeam_Maze_Solver
             }
         }
 
-        public MazeParser(string filename)
+        private void TranslateImageToMazeArray()
         {
-            img = Bitmap.FromFile(filename) as Bitmap;
             maze = new MazeValue[img.Width, img.Width];
             for (int i = 0; i < img.Width; i++)
             {
                 for (int j = 0; j < img.Height; j++)
                 {
-                    if (!ColorMap.REVERSE_MAPPING.TryGetValue(img.GetPixel(i, j), out maze[i, j]))
+                    if (!ColorMap.REVERSE_MAPPING.TryGetValue(img.GetPixel(i, j).ToArgb(), out maze[i, j]) ||
+                        maze[i, j] == MazeValue.Path)
                     {
                         throw new BadImageFormatException("The image has an unrecognized color");
                     }
                 }
             }
+        }
+
+        public MazeParser(Bitmap image)
+        {
+            this.img = image;
+            TranslateImageToMazeArray();
+        }
+
+        public MazeParser(string filename)
+        {
+            img = new Bitmap(filename);
+            TranslateImageToMazeArray();
+
+
         }
 
         /// <summary>

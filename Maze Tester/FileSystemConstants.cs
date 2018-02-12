@@ -14,5 +14,6 @@ namespace MazeTester
         public const string UNSOLVEABLE_MAZES_FOLDER = "Unsolveable Mazes";
         public const string SMALL_MAZES_FOLDER = "Small Mazes";
         public const string LARGE_MAZES_FOLDER = "Large Mazes";
+        public const string PARSE_TEST_FOLDER = "Parse Test Images";
     }
 }

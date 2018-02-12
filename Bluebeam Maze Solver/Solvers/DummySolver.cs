@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Bluebeam_Maze_Solver
 {
-    class DummySolver : MazeSolver
+    public class DummySolver : MazeSolver
     {
         public DummySolver()
         {

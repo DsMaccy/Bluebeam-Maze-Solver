@@ -13,6 +13,7 @@ namespace MazeGeneratorUI
         {
             InitializeComponent();
             generatorHandler = generatorComplete;
+            sizeComboBox.SelectedIndex = 0;
         }
 
         private void generateButton_Click(object sender, EventArgs e)
@@ -33,8 +34,7 @@ namespace MazeGeneratorUI
             GeneratorParameters parameters = new GeneratorParameters();
             parameters.filesizetag = sizeComboBox.SelectedItem as string;
             parameters.outfilename = saveDialog.FileName;
-            
-            t.Start(sizeComboBox.SelectedValue);
+            t.Start(parameters);
         }
 
         private struct GeneratorParameters
@@ -44,6 +44,7 @@ namespace MazeGeneratorUI
         }
         private void AsyncGenerator(object param)
         {
+            Console.WriteLine("Hello World");
             try
             {
                 GeneratorParameters parameters = (GeneratorParameters)param;
@@ -74,8 +75,9 @@ namespace MazeGeneratorUI
                 Invoke(generatorHandler, true);
             }
 
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.Write(e.StackTrace);
                 Invoke(generatorHandler, false);
             }
         }

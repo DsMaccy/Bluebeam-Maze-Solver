@@ -41,23 +41,23 @@ namespace MazeTester
             {
                 for (int j = 0; j < input_image.Height; j++)
                 {
-                    if (output_image.GetPixel(i, j) == ColorMap.MAPPING[MazeValue.Path])
+                    if (output_image.GetPixel(i, j).ToArgb() == ColorMap.MAPPING[MazeValue.Path])
                     {
-                        Assert.IsTrue(input_image.GetPixel(i, j) == ColorMap.MAPPING[MazeValue.OpenSpace]);
+                        Assert.IsTrue(input_image.GetPixel(i, j).ToArgb() == ColorMap.MAPPING[MazeValue.OpenSpace]);
 
-                        start_neighbor_found = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j) == ColorMap.MAPPING[MazeValue.Start]) ||
-                                               (j + 1 < output_image.Height && output_image.GetPixel(i, j + 1) == ColorMap.MAPPING[MazeValue.Start]) ||
-                                               (i - 1 > 0 && output_image.GetPixel(i - 1, j) == ColorMap.MAPPING[MazeValue.Start]) ||
-                                               (j - 1 > 0 && output_image.GetPixel(i, j - 1) == ColorMap.MAPPING[MazeValue.Start]);
-                        end_neighbor_found = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j) == ColorMap.MAPPING[MazeValue.End]) ||
-                                             (j + 1 < output_image.Height && output_image.GetPixel(i, j + 1) == ColorMap.MAPPING[MazeValue.End]) ||
-                                             (i - 1 > 0 && output_image.GetPixel(i - 1, j) == ColorMap.MAPPING[MazeValue.End]) ||
-                                             (j - 1 > 0 && output_image.GetPixel(i, j - 1) == ColorMap.MAPPING[MazeValue.End]);
+                        start_neighbor_found = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.Start]) ||
+                                               (j + 1 < output_image.Height && output_image.GetPixel(i, j + 1).ToArgb() == ColorMap.MAPPING[MazeValue.Start]) ||
+                                               (i - 1 > 0 && output_image.GetPixel(i - 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.Start]) ||
+                                               (j - 1 > 0 && output_image.GetPixel(i, j - 1).ToArgb() == ColorMap.MAPPING[MazeValue.Start]);
+                        end_neighbor_found = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
+                                             (j + 1 < output_image.Height && output_image.GetPixel(i, j + 1).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
+                                             (i - 1 > 0 && output_image.GetPixel(i - 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
+                                             (j - 1 > 0 && output_image.GetPixel(i, j - 1).ToArgb() == ColorMap.MAPPING[MazeValue.End]);
 
-                        bool hasNeighborPath = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j) == ColorMap.MAPPING[MazeValue.End]) ||
-                                               (j + 1 < output_image.Height && output_image.GetPixel(i, j + 1) == ColorMap.MAPPING[MazeValue.End]) ||
-                                               (i - 1 > 0 && output_image.GetPixel(i - 1, j) == ColorMap.MAPPING[MazeValue.End]) ||
-                                               (j - 1 > 0 && output_image.GetPixel(i, j - 1) == ColorMap.MAPPING[MazeValue.End]);
+                        bool hasNeighborPath = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
+                                               (j + 1 < output_image.Height && output_image.GetPixel(i, j + 1).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
+                                               (i - 1 > 0 && output_image.GetPixel(i - 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
+                                               (j - 1 > 0 && output_image.GetPixel(i, j - 1).ToArgb() == ColorMap.MAPPING[MazeValue.End]);
 
                         Assert.IsTrue(hasNeighborPath);
                     }

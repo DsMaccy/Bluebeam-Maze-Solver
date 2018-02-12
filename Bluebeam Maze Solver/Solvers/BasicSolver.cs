@@ -10,7 +10,7 @@ namespace Bluebeam_Maze_Solver.Solvers
     /// <summary>
     /// Use BFS to solve the maze
     /// </summary>
-    class BasicSolver : MazeSolver
+    public class BasicSolver : MazeSolver
     {
         private int BFS(ref MazeValue[,] maze, Point startingPoint, bool mutateMaze)
         {
@@ -30,12 +30,16 @@ namespace Bluebeam_Maze_Solver.Solvers
             foreach (Point point in starting_points)
             {
                 int distance = BFS(ref maze, point, false);
-                if (distance < min_distance)
+                if (distance != -1)
                 {
-                    min_distance = distance;
-                    bestStartingPoint = point;
+                    if (distance < min_distance)
+                    {
+                        min_distance = distance;
+                        bestStartingPoint = point;
+                    }
                 }
             }
+            return min_distance != int.MaxValue;
         }
     }
 }
