@@ -17,7 +17,7 @@ namespace Bluebeam_Maze_Solver
         /// Do nothing
         /// </summary>
         /// <param name="maze">The parameter is ignored</param>
-        public bool solve(MazeValue[,] maze)
+        public bool solve(ref MazeValue[,] maze)
         {
             return false;
         }

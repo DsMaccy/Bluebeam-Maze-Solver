@@ -92,8 +92,8 @@ namespace MazeGenerator
             Random rngesus = new Random();
             const int REGION_WIDTH = 4;
             
-            int start_x = rngesus.Next(REGION_WIDTH / 2 - 1, image.Width - REGION_WIDTH / 2);
-            int start_y = rngesus.Next(REGION_WIDTH / 2 - 1, image.Height - REGION_WIDTH / 2);
+            int start_x = rngesus.Next(REGION_WIDTH / 2 - 1, image.Width - REGION_WIDTH / 2 - 1);
+            int start_y = rngesus.Next(REGION_WIDTH / 2 - 1, image.Height - REGION_WIDTH / 2 - 1);
             for (int i = -REGION_WIDTH / 2; i < REGION_WIDTH / 2; i++)
             {
                 for (int j = -REGION_WIDTH / 2; j < REGION_WIDTH / 2; j++)
@@ -105,8 +105,8 @@ namespace MazeGenerator
             int end_x, end_y;
             do
             {
-                end_x = rngesus.Next(REGION_WIDTH / 2 - 1, image.Width - REGION_WIDTH / 2);
-                end_y = rngesus.Next(REGION_WIDTH / 2 - 1, image.Height - REGION_WIDTH / 2);
+                end_x = rngesus.Next(REGION_WIDTH / 2 - 1, image.Width - REGION_WIDTH / 2 - 1);
+                end_y = rngesus.Next(REGION_WIDTH / 2 - 1, image.Height - REGION_WIDTH / 2 - 1);
             } while (end_x == start_x && end_y == start_y);
 
             for (int i = -REGION_WIDTH / 2; i < REGION_WIDTH / 2; i++)

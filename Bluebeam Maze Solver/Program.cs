@@ -35,15 +35,15 @@ namespace Bluebeam_Maze_Solver
 
             try
             {
-                MazeParser parser = new MazeParser(source_file_name);
+                MazeValue[,] maze = MazeParser.Parse(source_file_name);
                 MazeSolver solver = new DummySolver();
 
-                if (!solver.solve(parser.Maze))
+                if (!solver.solve(ref maze))
                 {
                     ErrorHandler.HandleError(ExitCode.UNSOLVEABLE);
                     return (int)ExitCode.UNSOLVEABLE;
                 }
-                if (parser.GenerateFile(destination_file_name))
+                if (MazeParser.GenerateFile(maze, destination_file_name))
                 {
                     Console.WriteLine("Solution maze has been successfully created.");
                     return (int)ExitCode.GOOD;

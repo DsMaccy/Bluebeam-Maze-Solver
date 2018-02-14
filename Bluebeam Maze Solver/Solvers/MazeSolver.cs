@@ -14,6 +14,6 @@ namespace Bluebeam_Maze_Solver
         /// </summary>
         /// <param name="maze">The maze that is being traversed.  The maze will be mutated to containing path pixels (green)</param>
         /// <returns>true if a path was found from the starting set to the ending set</returns>
-        bool solve(MazeValue[,] maze);
+        bool solve(ref MazeValue[,] maze);
     }
 }
