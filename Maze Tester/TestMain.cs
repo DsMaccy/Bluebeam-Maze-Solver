@@ -47,17 +47,17 @@ namespace MazeTester
 
                         start_neighbor_found = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.Start]) ||
                                                (j + 1 < output_image.Height && output_image.GetPixel(i, j + 1).ToArgb() == ColorMap.MAPPING[MazeValue.Start]) ||
-                                               (i - 1 > 0 && output_image.GetPixel(i - 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.Start]) ||
-                                               (j - 1 > 0 && output_image.GetPixel(i, j - 1).ToArgb() == ColorMap.MAPPING[MazeValue.Start]);
+                                               (i - 1 >= 0 && output_image.GetPixel(i - 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.Start]) ||
+                                               (j - 1 >= 0 && output_image.GetPixel(i, j - 1).ToArgb() == ColorMap.MAPPING[MazeValue.Start]);
                         end_neighbor_found = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
                                              (j + 1 < output_image.Height && output_image.GetPixel(i, j + 1).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
-                                             (i - 1 > 0 && output_image.GetPixel(i - 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
-                                             (j - 1 > 0 && output_image.GetPixel(i, j - 1).ToArgb() == ColorMap.MAPPING[MazeValue.End]);
+                                             (i - 1 >= 0 && output_image.GetPixel(i - 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
+                                             (j - 1 >= 0 && output_image.GetPixel(i, j - 1).ToArgb() == ColorMap.MAPPING[MazeValue.End]);
 
                         bool hasNeighborPath = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
                                                (j + 1 < output_image.Height && output_image.GetPixel(i, j + 1).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
-                                               (i - 1 > 0 && output_image.GetPixel(i - 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
-                                               (j - 1 > 0 && output_image.GetPixel(i, j - 1).ToArgb() == ColorMap.MAPPING[MazeValue.End]);
+                                               (i - 1 >= 0 && output_image.GetPixel(i - 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
+                                               (j - 1 >= 0 && output_image.GetPixel(i, j - 1).ToArgb() == ColorMap.MAPPING[MazeValue.End]);
 
                         Assert.IsTrue(hasNeighborPath);
                     }
@@ -92,26 +92,22 @@ namespace MazeTester
         [ClassCleanup]
         public static void Cleanup()
         {
-            bool retry = true;
-            while (retry)
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            // Remove image copies
+            foreach (string filename in Directory.EnumerateFiles(COPY_FOLDER_PATH))
             {
-                try
-                {
-                    // Remove image copies
-                    foreach (string filename in Directory.EnumerateFiles(COPY_FOLDER_PATH))
-                    {
-                        File.Delete(filename);
-                    }
-                    Directory.Delete(COPY_FOLDER_PATH);
-                    retry = false;
-                }
-                catch (IOException)
-                {
-                    // Wait for half a second for remaining processes to finish releasing resources
-                    retry = false;
-                    System.Threading.Thread.Sleep(500);
-                }
+                File.Delete(filename);
             }
+            Directory.Delete(COPY_FOLDER_PATH);
+
+            // Remove any output images
+            foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.OUTPUT_FOLDER))
+            {
+                File.Delete(filename);
+            }
+            Directory.Delete(FileSystemConstants.OUTPUT_FOLDER);
         }
 
         #endregion
@@ -137,8 +133,7 @@ namespace MazeTester
         {
             foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.BAD_IMAGES_FOLDER))
             {
-                Console.WriteLine(filename);
-                string arguments = filename + " " + OUTPUT_FILE;
+                string arguments = "\"" + filename + "\" \"" + OUTPUT_FILE + "\"";
                 System.Diagnostics.Process proc = System.Diagnostics.Process.Start(FileSystemConstants.EXECUTABLE_NAME, arguments);
                 proc.WaitForExit();
                 Assert.IsTrue(proc.ExitCode == (int)ExitCode.BAD_INPUT);
@@ -150,8 +145,7 @@ namespace MazeTester
         {
             foreach (string filename in Directory.EnumerateFiles(COPY_FOLDER_PATH))
             {
-                Console.WriteLine(filename);
-                string arguments = filename + " " + filename;
+                string arguments = "\"" + filename + "\" \"" + filename + "\"";
                 Bitmap oldImage = Bitmap.FromFile(filename) as Bitmap;
                 System.Diagnostics.Process proc = System.Diagnostics.Process.Start(FileSystemConstants.EXECUTABLE_NAME, arguments);
                 proc.WaitForExit();
@@ -161,13 +155,24 @@ namespace MazeTester
             }
         }
 
-        [TestMethod, Timeout(5000)]
+        [TestMethod]//, Timeout(5000)]
+        public void TestOverlyLargeImage()
+        {
+            foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.OVERLY_LARGE_MAZES_FOLDER))
+            {
+                string arguments = "\"" + filename + "\" \"" + OUTPUT_FILE + "\"";
+                System.Diagnostics.Process proc = System.Diagnostics.Process.Start(FileSystemConstants.EXECUTABLE_NAME, arguments);
+                proc.WaitForExit();
+                Assert.IsTrue(proc.ExitCode == (int)ExitCode.INPUT_TOO_LARGE);
+            }
+        }
+
+        [TestMethod]//, Timeout(5000)]
         public void TestUnsolveableMazes()
         {
             foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.UNSOLVEABLE_MAZES_FOLDER))
             {
-                Console.WriteLine(filename);
-                string arguments = filename + " " + OUTPUT_FILE;
+                string arguments = "\"" + filename + "\" \"" + OUTPUT_FILE + "\"";
                 System.Diagnostics.Process proc = System.Diagnostics.Process.Start(FileSystemConstants.EXECUTABLE_NAME, arguments);
                 proc.WaitForExit();
                 Assert.IsTrue(proc.ExitCode == (int)ExitCode.UNSOLVEABLE);
@@ -179,8 +184,7 @@ namespace MazeTester
         {
             foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.SMALL_MAZES_FOLDER))
             {
-                Console.WriteLine(filename);
-                string arguments = filename + " " + OUTPUT_FILE;
+                string arguments = "\"" + filename + "\" \"" + OUTPUT_FILE + "\"";
                 System.Diagnostics.Process proc = System.Diagnostics.Process.Start(FileSystemConstants.EXECUTABLE_NAME, arguments);
                 proc.WaitForExit();
                 Assert.IsTrue(proc.ExitCode == (int)ExitCode.GOOD);
@@ -193,8 +197,7 @@ namespace MazeTester
         {
             foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.LARGE_MAZES_FOLDER))
             {
-                Console.WriteLine(filename);
-                string arguments = filename + " " + OUTPUT_FILE;
+                string arguments = "\"" + filename + "\" \"" + OUTPUT_FILE + "\"";
                 System.Diagnostics.Process proc = System.Diagnostics.Process.Start(FileSystemConstants.EXECUTABLE_NAME, arguments);
                 proc.WaitForExit();
                 Assert.IsTrue(proc.ExitCode == (int)ExitCode.GOOD);

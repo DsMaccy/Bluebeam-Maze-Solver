@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Windows.Forms;
+using System.Drawing.Imaging;
+using System.IO;
 
 namespace MazeGeneratorUI
 {
@@ -71,7 +73,19 @@ namespace MazeGeneratorUI
                     size = MazeGenerator.ImageSize.Medium;
                 }
                 MazeGenerator.MazeGenerator generator = new MazeGenerator.MazeGenerator(size);
-                generator.Image.Save(parameters.outfilename);
+                ImageFormat format = ImageFormat.Png;
+                string extension = Path.GetExtension(parameters.outfilename);
+                if (extension == ".jpg" || extension == ".jpeg")
+                {
+                    format = ImageFormat.Jpeg;
+                }
+                else if (extension == ".bmp")
+                {
+                    format = ImageFormat.Bmp;
+                }
+                
+
+                generator.Image.Save(parameters.outfilename, format);
                 Invoke(generatorHandler, true);
             }
 

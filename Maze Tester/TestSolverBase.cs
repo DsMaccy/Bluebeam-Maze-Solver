@@ -18,7 +18,16 @@ namespace MazeTester
         private MazeGenerator.MazeGenerator generator;
         private const int NUM_RANDOM_TESTS = 1;
 
-        [TestCleanup]
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
+        {
+            if (!Directory.Exists(FileSystemConstants.OUTPUT_FOLDER))
+            {
+                Directory.CreateDirectory(FileSystemConstants.OUTPUT_FOLDER);
+            }
+        }
+
+        [ClassCleanup]
         public void Cleanup()
         {
             // Needed to wait for garbage collector in order to properly delete file handlers
@@ -29,6 +38,7 @@ namespace MazeTester
             {
                 File.Delete(path);
             }
+            Directory.Delete(FileSystemConstants.OUTPUT_FOLDER);
         }
 
         public TestSolverBase(MazeSolver solver)
@@ -37,7 +47,7 @@ namespace MazeTester
         }
 
 
-        [TestMethod, Timeout(300000)]
+        [TestMethod]
         public void TestRandomlyGeneratedTinyMaze()
         {
             for (int i = 0; i < NUM_RANDOM_TESTS; i++)
@@ -49,7 +59,7 @@ namespace MazeTester
             }
         }
 
-        [TestMethod, Timeout(300000)]
+        [TestMethod]
         public void TestRandomlyGeneratedSmallMaze()
         {
             for (int i = 0; i < NUM_RANDOM_TESTS; i++)
@@ -61,7 +71,7 @@ namespace MazeTester
             }
         }
         
-        [TestMethod, Timeout(300000)]
+        [TestMethod]
         public void TestRandomlyGeneratedMediumMaze()
         {
             for (int i = 0; i < NUM_RANDOM_TESTS; i++)
@@ -73,7 +83,7 @@ namespace MazeTester
             }
         }
 
-        [TestMethod, Timeout(300000)]
+        [TestMethod]
         public void TestRandomlyGeneratedLargeMaze()
         {
             for (int i = 0; i < NUM_RANDOM_TESTS; i++)
@@ -84,17 +94,40 @@ namespace MazeTester
                 solver.solve(ref maze);
             }
         }
-        
-        [TestMethod, Timeout(120000)]
+
+        [TestMethod]
         public void TestUnsolveableMazes()
         {
-            Console.WriteLine("Number of files: " + Directory.GetFiles(FileSystemConstants.UNSOLVEABLE_MAZES_FOLDER).Length);
             foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.UNSOLVEABLE_MAZES_FOLDER))
             {
                 MazeValue[,] maze = MazeParser.Parse(filename);
                 MazeValue[,] values = DeepCopy(maze);
                 Assert.IsFalse(solver.solve(ref maze));
                 Assert.IsTrue(CheckEqual(values, maze));
+            }
+        }
+
+        [TestMethod]
+        public void TestSmallMazes()
+        {
+            foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.SMALL_MAZES_FOLDER))
+            {
+                MazeValue[,] maze = MazeParser.Parse(filename);
+                MazeValue[,] values = DeepCopy(maze);
+                Assert.IsTrue(solver.solve(ref maze));
+                CheckMaze(maze);
+            }
+        }
+
+        [TestMethod]
+        public void TestLargeMazes()
+        {
+            foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.LARGE_MAZES_FOLDER))
+            {
+                MazeValue[,] maze = MazeParser.Parse(filename);
+                MazeValue[,] values = DeepCopy(maze);
+                Assert.IsTrue(solver.solve(ref maze));
+                CheckMaze(maze);
             }
         }
 
@@ -111,10 +144,11 @@ namespace MazeTester
                 {
                     MazeValue[,] maze = MazeParser.Parse(filepath);
                     solver.solve(ref maze);
-                    MazeParser.GenerateFile(maze, Path.Combine(FileSystemConstants.OUTPUT_FOLDER, "tmp.png"));
+
+                    // Debug Output
+                    MazeParser.GenerateFile(maze, "C:\\Users\\d mac\\desktop\\debug_out.png");
+
                     int result = CheckMaze(maze);
-                    Console.WriteLine("Result: " + result);
-                    Console.WriteLine("Expected Result: " + expected_result);
                     Assert.AreEqual(expected_result, result);
                 }
                 else
@@ -152,22 +186,41 @@ namespace MazeTester
                         path_count++;
                         bool hasNeighborStart = (i + 1 < width && maze[i + 1, j] == MazeValue.Start) ||
                                                 (j + 1 < height && maze[i, j + 1] == MazeValue.Start) ||
-                                                (i - 1 > 0 && maze[i - 1, j] == MazeValue.Start) ||
-                                                (j - 1 > 0 && maze[i, j - 1] == MazeValue.Start);
+                                                (i - 1 >= 0 && maze[i - 1, j] == MazeValue.Start) ||
+                                                (j - 1 >= 0 && maze[i, j - 1] == MazeValue.Start);
 
                         bool hasNeighborEnd = (i + 1 < width && maze[i + 1, j] == MazeValue.End) ||
                                               (j + 1 < height && maze[i, j + 1] == MazeValue.End) ||
-                                              (i - 1 > 0 && maze[i - 1, j] == MazeValue.End) ||
-                                              (j - 1 > 0 && maze[i, j - 1] == MazeValue.End);
+                                              (i - 1 >= 0 && maze[i - 1, j] == MazeValue.End) ||
+                                              (j - 1 >= 0 && maze[i, j - 1] == MazeValue.End);
 
                         bool hasNeighborPath = (i + 1 < width && maze[i + 1, j] == MazeValue.Path) ||
                                                (j + 1 < height && maze[i, j + 1] == MazeValue.Path) ||
-                                               (i - 1 > 0 && maze[i - 1, j] == MazeValue.Path) ||
-                                               (j - 1 > 0 && maze[i, j - 1] == MazeValue.Path);
+                                               (i - 1 >= 0 && maze[i - 1, j] == MazeValue.Path) ||
+                                               (j - 1 >= 0 && maze[i, j - 1] == MazeValue.Path);
 
                         Assert.IsTrue(hasNeighborPath || (hasNeighborStart && hasNeighborEnd));
                         start_neighbor_found = start_neighbor_found || hasNeighborStart;
                         end_neighbor_found = start_neighbor_found || hasNeighborEnd;
+                    }
+                    else if (maze[i, j] == MazeValue.Start)
+                    {
+                        bool hasNeighborEnd = (i + 1 < width && maze[i + 1, j] == MazeValue.End) ||
+                                              (j + 1 < height && maze[i, j + 1] == MazeValue.End) ||
+                                              (i - 1 >= 0 && maze[i - 1, j] == MazeValue.End) ||
+                                              (j - 1 >= 0 && maze[i, j - 1] == MazeValue.End);
+                        
+                        start_neighbor_found = start_neighbor_found || hasNeighborEnd;
+                        end_neighbor_found = end_neighbor_found || hasNeighborEnd;
+                    }
+                    else if (maze[i, j] == MazeValue.End)
+                    {
+                        bool hasNeighborStart = (i + 1 < width && maze[i + 1, j] == MazeValue.Start) ||
+                                                (j + 1 < height && maze[i, j + 1] == MazeValue.Start) ||
+                                                (i - 1 >= 0 && maze[i - 1, j] == MazeValue.Start) ||
+                                                (j - 1 >= 0 && maze[i, j - 1] == MazeValue.Start);
+                        start_neighbor_found = start_neighbor_found || hasNeighborStart;
+                        end_neighbor_found = end_neighbor_found || hasNeighborStart;
                     }
                 }
             }
@@ -194,8 +247,8 @@ namespace MazeTester
         }
         protected bool CheckEqual(MazeValue[,] maze1, MazeValue[,] maze2)
         {
-            Assert.Equals(maze1.GetLength(0), maze2.GetLength(0));
-            Assert.Equals(maze1.GetLength(1), maze2.GetLength(1));
+            Assert.IsTrue(maze1.GetLength(0) == maze2.GetLength(0));
+            Assert.IsTrue(maze1.GetLength(1) == maze2.GetLength(1));
 
             int width = maze1.GetLength(0);
             int height = maze1.GetLength(1);

@@ -21,6 +21,10 @@ namespace MazeGenerator
 
         private Bitmap image;
         private int expectedShortestPath;
+        private int start_x, start_y;
+        private int end_x, end_y;
+        private const int REGION_WIDTH = 4;
+
 
         public Bitmap Image
         {
@@ -59,17 +63,22 @@ namespace MazeGenerator
                     throw new NotImplementedException();
             }
 
-            FirstPassMakeGrid();
+            MakeGrid();
 
-            SecondPassDesignateStartAndEnd();
+            DesignateStartAndEnd();
 
-            ThirdPassOpenPath();
+            CreatePathBetweenStartAndEnd();
+
+            OpenPath();
         }
 
 
         #region Private Helper Methods
 
-        private void FirstPassMakeGrid()
+        /// <summary>
+        /// Create Grid of closed blocks
+        /// </summary>
+        private void MakeGrid()
         {
             for (int i = 0; i < image.Width; i++)
             {
@@ -87,58 +96,171 @@ namespace MazeGenerator
             }
         }
 
-        private void SecondPassDesignateStartAndEnd()
+        /// <summary>
+        /// Define starting and ending regions
+        /// </summary>
+        private void DesignateStartAndEnd()
         {
             Random rngesus = new Random();
-            const int REGION_WIDTH = 4;
             
-            int start_x = rngesus.Next(REGION_WIDTH / 2 - 1, image.Width - REGION_WIDTH / 2 - 1);
-            int start_y = rngesus.Next(REGION_WIDTH / 2 - 1, image.Height - REGION_WIDTH / 2 - 1);
+            
+            start_x = rngesus.Next(REGION_WIDTH / 2, image.Width - REGION_WIDTH / 2 - 1);
+            start_y = rngesus.Next(REGION_WIDTH / 2, image.Height - REGION_WIDTH / 2 - 1);
+            do
+            {
+                end_x = rngesus.Next(REGION_WIDTH / 2, image.Width - REGION_WIDTH / 2 - 1);
+                end_y = rngesus.Next(REGION_WIDTH / 2, image.Height - REGION_WIDTH / 2 - 1);
+            } while (end_x == start_x && end_y == start_y);
+
+
+
             for (int i = -REGION_WIDTH / 2; i < REGION_WIDTH / 2; i++)
             {
                 for (int j = -REGION_WIDTH / 2; j < REGION_WIDTH / 2; j++)
                 {
+                    Console.WriteLine(i + " " + j);
+                    Console.WriteLine(start_x + " " + start_y);
                     image.SetPixel(start_x + i, start_y + j, Color.Blue);
                 }
             }
 
-            int end_x, end_y;
-            do
-            {
-                end_x = rngesus.Next(REGION_WIDTH / 2 - 1, image.Width - REGION_WIDTH / 2 - 1);
-                end_y = rngesus.Next(REGION_WIDTH / 2 - 1, image.Height - REGION_WIDTH / 2 - 1);
-            } while (end_x == start_x && end_y == start_y);
-
             for (int i = -REGION_WIDTH / 2; i < REGION_WIDTH / 2; i++)
             {
                 for (int j = -REGION_WIDTH / 2; j < REGION_WIDTH / 2; j++)
                 {
+                    Console.WriteLine(end_x + " " + end_y);
+                    Console.WriteLine(start_x + " " + start_y);
                     image.SetPixel(end_x + i, end_y + j, Color.Red);
                 }
             }
         }
 
-
-        private void ThirdPassOpenPath()
+        /// <summary>
+        /// This method guarantees that there the starting and ending regions are connected
+        /// </summary>
+        private void CreatePathBetweenStartAndEnd()
         {
+            bool[,] visited;
+            Point curr, prev;
+            bool validPathCreated = false;
+            List<Point> path;
+            Random rngesus = new Random();
+            do
+            {
+                curr = new Point(start_x, start_y);
+                prev = curr;
+                visited = new bool[image.Width, image.Height];
+                path = new List<Point>();
+                List<Point> validNeighbors;
+                while (true)
+                {
+                    if (image.GetPixel(curr.X, curr.Y).ToArgb() == Color.Red.ToArgb())
+                    {
+                        validPathCreated = true;
+                        break;
+                    }
+
+                    visited[curr.X, curr.Y] = true;
+                    path.Add(curr);
+                    validNeighbors = new List<Point>();
+                    if (curr.X + 1 < image.Width && !visited[curr.X + 1, curr.Y])
+                    { validNeighbors.Add(new Point(curr.X + 1, curr.Y)); }
+                    if (curr.Y + 1 < image.Height && !visited[curr.X, curr.Y + 1])
+                    { validNeighbors.Add(new Point(curr.X, curr.Y + 1)); }
+                    if (curr.X > 0 && !visited[curr.X - 1, curr.Y])
+                    { validNeighbors.Add(new Point(curr.X - 1, curr.Y)); }
+                    if (curr.Y > 0 && !visited[curr.X, curr.Y - 1])
+                    { validNeighbors.Add(new Point(curr.X, curr.Y - 1)); }
+
+                    // Path got stuck in a spiral
+                    if (validNeighbors.Count == 0)
+                    {
+                        break;
+                    }
+
+                    double sumCount = 0;
+                    double[] individualCounts = new double[validNeighbors.Count];
+                    const double CORRECT_DIRECTION_WEIGHT_MODIFIER = 10.0;
+                    const double CONSISTENT_DIRECTION_WEIGHT_MODIFIER = 100.0;
+                    for (int i = 0; i < validNeighbors.Count; i++)
+                    {
+                        Point p = validNeighbors[i];
+                        individualCounts[i] = 1;
+                        sumCount += 1;
+
+                        // More heavily weight the values that are in the
+                        if ((p.X - curr.X) * (end_x - curr.X) > 0)
+                        {
+                            sumCount += CORRECT_DIRECTION_WEIGHT_MODIFIER;
+                            individualCounts[i] += CORRECT_DIRECTION_WEIGHT_MODIFIER;
+                        }
+                        if ((p.Y - curr.Y) * (end_y - curr.Y) > 0)
+                        {
+                            sumCount += CORRECT_DIRECTION_WEIGHT_MODIFIER;
+                            individualCounts[i] += CORRECT_DIRECTION_WEIGHT_MODIFIER;
+                        }
+
+                        // More heavily weight directions that are consistent with the last move
+                        if ((p.Y - curr.Y) == (curr.Y - prev.Y) && (p.X - curr.X) == (curr.X - prev.X))
+                        {
+                            sumCount += CONSISTENT_DIRECTION_WEIGHT_MODIFIER;
+                            individualCounts[i] += CONSISTENT_DIRECTION_WEIGHT_MODIFIER;
+                        }
+                    }
+                    double selectionValue = rngesus.NextDouble() * sumCount;
+                    for (int i = 0; i < validNeighbors.Count; i++)
+                    {
+                        selectionValue -= individualCounts[i];
+                        if (selectionValue < 0)
+                        {
+                            prev = curr;
+                            curr = validNeighbors[i];
+                            break;
+                        }
+                    }
+                }
+            } while (!validPathCreated);
+
+            // At this point, a valid path has been found and is stored in the list path
+            // Go through and actually open the path up
+            foreach (Point p in path)
+            {
+                if (image.GetPixel(p.X, p.Y).ToArgb() == Color.Black.ToArgb())
+                {
+                    image.SetPixel(p.X, p.Y, Color.White);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Randomly open space up
+        /// </summary>
+        private void OpenPath()
+        {
+            // These probabilities should add approximately to 1.0 (precision not necessary);
+            const double SINGLE_SIDE_PROBABILITY = 0.4;
+            const double BOTH_SIDE_PROBABILITY = 0.19999;
+            const double NEITHER_PROBABILITY = 1.0 - (BOTH_SIDE_PROBABILITY + 2 * SINGLE_SIDE_PROBABILITY);
+            const double PROB_SUM = BOTH_SIDE_PROBABILITY + 2 * SINGLE_SIDE_PROBABILITY + NEITHER_PROBABILITY;
+
             // Skip by two in each direction to get to the center of each grid cell
             Random rngesus = new Random();
             bool forward_pass = true;
             for (int i = 1; i < image.Width; i += 2)
             {
-                if (forward_pass)
+                for (int j = 1; j < image.Height; j += 2)
                 {
-                    for (int j = 1; j < image.Height; j += 2)
+                    double roll = rngesus.NextDouble();
+                    if (roll < (SINGLE_SIDE_PROBABILITY + BOTH_SIDE_PROBABILITY) && i + 2 < image.Width)
                     {
-                        double roll = rngesus.NextDouble();
-                        if (roll < 0.5 && i + 2 < image.Width)
+                        if (image.GetPixel(i + 1, j).ToArgb() == Color.Black.ToArgb())
                         {
-                            if (image.GetPixel(i + 1, j).ToArgb() == Color.Black.ToArgb())
-                            {
-                                image.SetPixel(i + 1, j, Color.White);
-                            }
+                            image.SetPixel(i + 1, j, Color.White);
                         }
-                        if (roll >= 0.4 && roll < 0.9 && j + 2 < image.Height)
+                    }
+                    if (forward_pass)
+                    {
+                        if (roll >= SINGLE_SIDE_PROBABILITY && roll < (PROB_SUM - NEITHER_PROBABILITY) && j + 2 < image.Height)
                         {
                             if (image.GetPixel(i, j + 1).ToArgb() == Color.Black.ToArgb())
                             {
@@ -146,21 +268,9 @@ namespace MazeGenerator
                             }
                         }
                     }
-                }
-                else
-                {
-                    for (int j = image.Height - 2; j > 0; j -= 2)
+                    else
                     {
-                        
-                        double roll = rngesus.NextDouble();
-                        if (roll < 0.5 && i + 2 < image.Width)
-                        {
-                            if (image.GetPixel(i + 1, j).ToArgb() == Color.Black.ToArgb())
-                            {
-                                image.SetPixel(i + 1, j, Color.White);
-                            }
-                        }
-                        if (roll >= 0.4 && roll < 0.9 && j - 2 >= 0)
+                        if (roll >= SINGLE_SIDE_PROBABILITY && roll < NEITHER_PROBABILITY && j - 2 >= 0)
                         {
                             if (image.GetPixel(i, j - 1).ToArgb() == Color.Black.ToArgb())
                             {
@@ -171,11 +281,6 @@ namespace MazeGenerator
                 }
                 forward_pass = !forward_pass;
             }
-
-            // TODO: Final modifications to make sure maze is solveable
-
-            // TODO: Modify the expected shortest path
-            // expectedShortestPath = ...
         }
 
         #endregion

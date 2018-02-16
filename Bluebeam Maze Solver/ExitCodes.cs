@@ -12,5 +12,6 @@ namespace Bluebeam_Maze_Solver
         BAD_INPUT = 1,
         UNSOLVEABLE = 2,
         INVALID_OUTPUT_PATH = 3,
+        INPUT_TOO_LARGE = 4,
     }
 }

@@ -16,7 +16,7 @@ namespace Bluebeam_Maze_Solver
             if (args.Length != 2)
             {
                 ErrorHandler.PrintUsage();
-                return 0;
+                return (int)ExitCode.GOOD;
             }
             string source_file_name = args[0];
             string destination_file_name = args[1];
@@ -31,7 +31,6 @@ namespace Bluebeam_Maze_Solver
                 ErrorHandler.HandleError(ExitCode.INVALID_OUTPUT_PATH);
                 return (int)ExitCode.INVALID_OUTPUT_PATH;
             }
-
 
             try
             {
@@ -56,7 +55,12 @@ namespace Bluebeam_Maze_Solver
             {
                 ErrorHandler.HandleError(ExitCode.BAD_INPUT);
                 return (int)ExitCode.BAD_INPUT;
-            }            
+            }
+            catch (OutOfMemoryException)
+            {
+                ErrorHandler.HandleError(ExitCode.INPUT_TOO_LARGE);
+                return (int)ExitCode.INPUT_TOO_LARGE;
+            }
         }
     }
 }

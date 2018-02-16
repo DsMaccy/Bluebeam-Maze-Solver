@@ -45,7 +45,8 @@ namespace Bluebeam_Maze_Solver
             {
                 for (int j = 0; j < img.Height; j++)
                 {
-                    if (!ColorMap.REVERSE_MAPPING.TryGetValue(img.GetPixel(i, j).ToArgb(), out maze[i, j]) ||
+                    Color pixel = img.GetPixel(i, j);
+                    if (!ColorMap.REVERSE_MAPPING.TryGetValue(pixel.ToArgb(), out maze[i, j]) ||
                         (pathInvalid && maze[i, j] == MazeValue.Path))
                     {
                         throw new BadImageFormatException("The image has an unrecognized color");

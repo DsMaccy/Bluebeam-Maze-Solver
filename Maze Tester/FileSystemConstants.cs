@@ -16,5 +16,6 @@ namespace MazeTester
         public const string LARGE_MAZES_FOLDER = "Large Mazes";
         public const string PARSE_TEST_FOLDER = "Parse Test Images";
         public const string KNOWN_SOLUTION_MAZES_FOLDER = "Known Solution Mazes";
+        public const string OVERLY_LARGE_MAZES_FOLDER = "Too Big Mazes";
     }
 }

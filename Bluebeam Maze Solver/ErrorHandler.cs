@@ -28,6 +28,9 @@ namespace Bluebeam_Maze_Solver
                     break;
                 case ExitCode.GOOD:
                     break;
+                case ExitCode.INPUT_TOO_LARGE:
+                    Console.WriteLine("The input image provided was way too big.  Please provide smaller inputs.");
+                    break;
                 default:
                     throw new NotImplementedException();
             }
