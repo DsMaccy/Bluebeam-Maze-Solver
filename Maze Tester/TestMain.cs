@@ -45,21 +45,42 @@ namespace MazeTester
                     {
                         Assert.IsTrue(input_image.GetPixel(i, j).ToArgb() == ColorMap.MAPPING[MazeValue.OpenSpace]);
 
-                        start_neighbor_found = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.Start]) ||
+                        bool hasNeighborStart = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.Start]) ||
                                                (j + 1 < output_image.Height && output_image.GetPixel(i, j + 1).ToArgb() == ColorMap.MAPPING[MazeValue.Start]) ||
                                                (i - 1 >= 0 && output_image.GetPixel(i - 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.Start]) ||
                                                (j - 1 >= 0 && output_image.GetPixel(i, j - 1).ToArgb() == ColorMap.MAPPING[MazeValue.Start]);
-                        end_neighbor_found = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
+                        bool hasNeighborEnd = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
                                              (j + 1 < output_image.Height && output_image.GetPixel(i, j + 1).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
                                              (i - 1 >= 0 && output_image.GetPixel(i - 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
                                              (j - 1 >= 0 && output_image.GetPixel(i, j - 1).ToArgb() == ColorMap.MAPPING[MazeValue.End]);
 
-                        bool hasNeighborPath = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
-                                               (j + 1 < output_image.Height && output_image.GetPixel(i, j + 1).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
-                                               (i - 1 >= 0 && output_image.GetPixel(i - 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
-                                               (j - 1 >= 0 && output_image.GetPixel(i, j - 1).ToArgb() == ColorMap.MAPPING[MazeValue.End]);
+                        bool hasNeighborPath = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.Path]) ||
+                                               (j + 1 < output_image.Height && output_image.GetPixel(i, j + 1).ToArgb() == ColorMap.MAPPING[MazeValue.Path]) ||
+                                               (i - 1 >= 0 && output_image.GetPixel(i - 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.Path]) ||
+                                               (j - 1 >= 0 && output_image.GetPixel(i, j - 1).ToArgb() == ColorMap.MAPPING[MazeValue.Path]);
+                        
+                        Assert.IsTrue(hasNeighborPath || (hasNeighborStart && hasNeighborEnd));
+                        start_neighbor_found = start_neighbor_found || hasNeighborStart;
+                        end_neighbor_found = start_neighbor_found || hasNeighborEnd;
+                    }
+                    else if (output_image.GetPixel(i, j).ToArgb() == ColorMap.MAPPING[MazeValue.Start])
+                    {
+                        bool hasNeighborEnd = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
+                                              (j + 1 < output_image.Height && output_image.GetPixel(i, j + 1).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
+                                              (i - 1 >= 0 && output_image.GetPixel(i - 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.End]) ||
+                                              (j - 1 >= 0 && output_image.GetPixel(i, j - 1).ToArgb() == ColorMap.MAPPING[MazeValue.End]);
 
-                        Assert.IsTrue(hasNeighborPath);
+                        start_neighbor_found = start_neighbor_found || hasNeighborEnd;
+                        end_neighbor_found = end_neighbor_found || hasNeighborEnd;
+                    }
+                    else if (output_image.GetPixel(i, j).ToArgb() == ColorMap.MAPPING[MazeValue.End])
+                    {
+                        bool hasNeighborStart = (i + 1 < output_image.Width && output_image.GetPixel(i + 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.Start]) ||
+                                                (j + 1 < output_image.Height && output_image.GetPixel(i, j + 1).ToArgb() == ColorMap.MAPPING[MazeValue.Start]) ||
+                                                (i - 1 >= 0 && output_image.GetPixel(i - 1, j).ToArgb() == ColorMap.MAPPING[MazeValue.Start]) ||
+                                                (j - 1 >= 0 && output_image.GetPixel(i, j - 1).ToArgb() == ColorMap.MAPPING[MazeValue.Start]);
+                        start_neighbor_found = start_neighbor_found || hasNeighborStart;
+                        end_neighbor_found = end_neighbor_found || hasNeighborStart;
                     }
                 }
             }
@@ -77,11 +98,12 @@ namespace MazeTester
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            if (!Directory.Exists(FileSystemConstants.OUTPUT_FOLDER))
+            if (Directory.Exists(FileSystemConstants.OUTPUT_FOLDER) || Directory.Exists(COPY_FOLDER_PATH))
             {
-                Directory.CreateDirectory(FileSystemConstants.OUTPUT_FOLDER);
+                Cleanup();
             }
 
+            Directory.CreateDirectory(FileSystemConstants.OUTPUT_FOLDER);
             Directory.CreateDirectory(COPY_FOLDER_PATH);
             foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.SMALL_MAZES_FOLDER))
             {
@@ -155,7 +177,12 @@ namespace MazeTester
             }
         }
 
-        [TestMethod]//, Timeout(5000)]
+
+        /// <summary>
+        /// This can only be tested with files that can't be held by the solver in memory
+        /// This test may not apply to all solvers, and the limit reached is different for each solver and architecture
+        /// </summary>
+        //[TestMethod]
         public void TestOverlyLargeImage()
         {
             foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.OVERLY_LARGE_MAZES_FOLDER))
@@ -179,7 +206,7 @@ namespace MazeTester
             }
         }
 
-        [TestMethod, Timeout(5000)]
+        [TestMethod]//, Timeout(5000)]
         public void TestSmallMazes()
         {
             foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.SMALL_MAZES_FOLDER))
@@ -189,10 +216,15 @@ namespace MazeTester
                 proc.WaitForExit();
                 Assert.IsTrue(proc.ExitCode == (int)ExitCode.GOOD);
                 testValidSolution(filename, OUTPUT_FILE);
+
+                // Cleanup output file
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                File.Delete(OUTPUT_FILE);
             }
         }
 
-        [TestMethod, Timeout(5000)]
+        [TestMethod]
         public void TestLargeMazes()
         {
             foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.LARGE_MAZES_FOLDER))
@@ -202,6 +234,11 @@ namespace MazeTester
                 proc.WaitForExit();
                 Assert.IsTrue(proc.ExitCode == (int)ExitCode.GOOD);
                 testValidSolution(filename, OUTPUT_FILE);
+
+                // Cleanup output file
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                File.Delete(OUTPUT_FILE);
             }
         }
 

@@ -145,9 +145,6 @@ namespace MazeTester
                     MazeValue[,] maze = MazeParser.Parse(filepath);
                     solver.solve(ref maze);
 
-                    // Debug Output
-                    MazeParser.GenerateFile(maze, "C:\\Users\\d mac\\desktop\\debug_out.png");
-
                     int result = CheckMaze(maze);
                     Assert.AreEqual(expected_result, result);
                 }

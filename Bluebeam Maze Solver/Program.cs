@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace Bluebeam_Maze_Solver
@@ -35,19 +31,19 @@ namespace Bluebeam_Maze_Solver
             try
             {
                 MazeValue[,] maze = MazeParser.Parse(source_file_name);
-                MazeSolver solver = new DummySolver();
-
-                if (!solver.solve(ref maze))
+                MazeSolver solver = new Solvers.BasicSolver();
+                bool solution_found = solver.solve(ref maze);
+                if (!solution_found)
                 {
                     ErrorHandler.HandleError(ExitCode.UNSOLVEABLE);
                     return (int)ExitCode.UNSOLVEABLE;
                 }
+
                 if (MazeParser.GenerateFile(maze, destination_file_name))
                 {
                     Console.WriteLine("Solution maze has been successfully created.");
                     return (int)ExitCode.GOOD;
                 }
-
                 ErrorHandler.HandleError(ExitCode.INVALID_OUTPUT_PATH);
                 return (int)ExitCode.INVALID_OUTPUT_PATH;
             }
