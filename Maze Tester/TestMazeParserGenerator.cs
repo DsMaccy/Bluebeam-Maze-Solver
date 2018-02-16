@@ -13,6 +13,31 @@ namespace MazeTester
     [TestClass]
     public class TestMazeParserGenerator
     {
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
+        {
+            if (Directory.Exists(FileSystemConstants.OUTPUT_FOLDER))
+            {
+                Cleanup();
+            }
+
+            Directory.CreateDirectory(FileSystemConstants.OUTPUT_FOLDER);
+        }
+        [ClassCleanup]
+        public static void Cleanup()
+        {
+            // Needed to wait for garbage collector in order to properly delete file handlers
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            foreach (string path in Directory.EnumerateFiles(FileSystemConstants.OUTPUT_FOLDER))
+            {
+                File.Delete(path);
+            }
+        }
+
+        #region Test Methods
+
         [TestMethod]
         public void TestGenerateEmptyImage()
         {
@@ -63,11 +88,31 @@ namespace MazeTester
         }
 
         [TestMethod]
-        public void TestCorrectnessGenerateImages()
+        public void TestCorrectnessForPNGFormat()
         {
-            // Alternate through the valid file types to check if each can be created
-            string[] validFileExtension = new string[] { ".png", ".jpg", ".jpeg", ".bmp" };
-            int NUM_TESTS = 3 * validFileExtension.Length;
+            CreateAndTestRandomlyGeneratedImage(".png");
+        }
+
+        [TestMethod]
+        public void TestCorrectnessForBMPFormat()
+        {
+            CreateAndTestRandomlyGeneratedImage(".bmp");
+        }
+
+        [TestMethod]
+        public void TestCorrectnessForJPEGFormat()
+        {
+            CreateAndTestRandomlyGeneratedImage(".jpeg", true);
+            CreateAndTestRandomlyGeneratedImage(".jpg", true);
+        }
+
+        #endregion
+
+        #region Helper Methods
+
+        private void CreateAndTestRandomlyGeneratedImage(string fileExtension, bool useFuzzy = false)
+        {
+            int NUM_TESTS = 10;
             Random rngesus = new Random();
 
             Array mazeValues = Enum.GetValues(typeof(MazeValue));
@@ -75,7 +120,8 @@ namespace MazeTester
             {
                 int width = rngesus.Next(75, 100);
                 int height = rngesus.Next(75, 100);
-                string output_file = Path.Combine(FileSystemConstants.OUTPUT_FOLDER, "tmp_" + test_num + validFileExtension[test_num % validFileExtension.Length]);
+                string output_file = Path.Combine(FileSystemConstants.OUTPUT_FOLDER, "tmp_" + 
+                                                  test_num + fileExtension);
 
                 // Create maze
                 MazeValue[,] maze = new MazeValue[width, height];
@@ -83,14 +129,24 @@ namespace MazeTester
                 {
                     for (int j = 0; j < height; j++)
                     {
-                        maze[i,j] = (MazeValue)rngesus.Next(0, mazeValues.Length);
+                        maze[i, j] = (MazeValue)rngesus.Next(0, mazeValues.Length);
                     }
                 }
-                MazeValue[,] mazeFromFile;
 
                 Assert.IsTrue(MazeParser.GenerateFile(maze, output_file));
-                mazeFromFile = MazeParser.Parse(output_file, false);
-                Assert.IsTrue(CheckMazeEquality(maze, mazeFromFile));                
+
+                // Use the fuzzy parser on jpeg images
+                MazeValue[,] mazeFromFile;
+                if (!useFuzzy)
+                {
+                    mazeFromFile = MazeParser.Parse(output_file, false);
+                }
+                else
+                {
+                    mazeFromFile = MazeParser.FuzzyParse(output_file, false);
+                }
+
+                Assert.IsTrue(CheckMazeEquality(maze, mazeFromFile));
             }
         }
 
@@ -114,5 +170,7 @@ namespace MazeTester
 
             return true;
         }
+
+        #endregion
     }
 }
