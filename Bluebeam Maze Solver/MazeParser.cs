@@ -12,12 +12,14 @@ namespace Bluebeam_Maze_Solver
     public class MazeParser
     {
         #region Public Static Methods
+        /*
         public static MazeValue[,] Parse(string filename)
         {
             return Parse(filename, true);
         }
+        */
 
-        public static MazeValue[,] Parse(string filename, bool pathInvalid)
+        public static MazeValue[,] Parse(string filename, bool pathInvalid = true)
         {
             Bitmap img;
             try
@@ -32,13 +34,14 @@ namespace Bluebeam_Maze_Solver
 
             return Parse(img, pathInvalid);
         }
-
+        /*
         public static MazeValue[,] Parse(Bitmap img)
         {
             return Parse(img, true);
         }
+        */
 
-        public static MazeValue[,] Parse(Bitmap img, bool pathInvalid)
+        public static MazeValue[,] Parse(Bitmap img, bool pathInvalid = true)
         {
             MazeValue[,] maze = new MazeValue[img.Width, img.Height];
             for (int i = 0; i < img.Width; i++)
@@ -57,7 +60,12 @@ namespace Bluebeam_Maze_Solver
             return maze;
         }
 
-        public static MazeValue[,] FuzzyParse(string filename)
+        public static MazeValue[,] FuzzyParse(string filename, bool pathInvalid = true)
+        {
+            // TODO: Implement
+            throw new NotImplementedException();
+        }
+        public static MazeValue[,] FuzzyParse(Bitmap img, bool pathInvalid = true)
         {
             // TODO: Implement
             throw new NotImplementedException();
