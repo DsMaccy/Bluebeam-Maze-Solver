@@ -15,20 +15,14 @@ namespace MazeTester
     {
         protected delegate MazeValue[,] parseFunctionOnString(string str, bool pathInvalid = true);
         protected delegate MazeValue[,] parseFunctionOnImage(Bitmap bm, bool pathInvalid = true);
-        //protected delegate MazeValue[,] parseFunctionOnStringWithGreenBool(String bm, bool pathInvalid=true);
-        //protected delegate MazeValue[,] parseFunctionOnImageWithGreenBool(Bitmap bm, bool pathInvalid=true);
 
         protected parseFunctionOnString parseOnString;
         protected parseFunctionOnImage parseOnImage;
-        //protected parseFunctionOnStringWithGreenBool parseOnStringWithPath;
-        //protected parseFunctionOnImageWithGreenBool parseOnImageWithPath;
 
         public TestMazeParser()
         {
             parseOnString = MazeParser.Parse;
             parseOnImage = MazeParser.Parse;
-            //parseOnStringWithPath = MazeParser.Parse;
-            //parseOnImageWithPath = MazeParser.Parse;
         }
         [TestCleanup]
         public void Cleanup()

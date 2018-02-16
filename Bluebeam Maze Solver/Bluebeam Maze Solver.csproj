@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Solvers\CompressedSolver.cs" />
     <Compile Include="Solvers\BasicSolver.cs" />
     <Compile Include="Solvers\DummySolver.cs" />
     <Compile Include="ErrorHandler.cs" />

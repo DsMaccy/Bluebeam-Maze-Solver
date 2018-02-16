@@ -11,13 +11,15 @@ namespace Bluebeam_Maze_Solver
 {
     public class MazeParser
     {
+        #region Private Static Members
+
+        private const float MAX_COLOR_DISTANCE = 100f;
+
+        #endregion
+
         #region Public Static Methods
-        /*
-        public static MazeValue[,] Parse(string filename)
-        {
-            return Parse(filename, true);
-        }
-        */
+
+        #region Parse
 
         public static MazeValue[,] Parse(string filename, bool pathInvalid = true)
         {
@@ -27,19 +29,13 @@ namespace Bluebeam_Maze_Solver
                 img = new Bitmap(filename);
             }
             
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new BadImageFormatException("Image either non existent or not in the correct format: " + filename);
             }
 
             return Parse(img, pathInvalid);
         }
-        /*
-        public static MazeValue[,] Parse(Bitmap img)
-        {
-            return Parse(img, true);
-        }
-        */
 
         public static MazeValue[,] Parse(Bitmap img, bool pathInvalid = true)
         {
@@ -60,16 +56,48 @@ namespace Bluebeam_Maze_Solver
             return maze;
         }
 
+        #endregion
+
+
+        #region Fuzzy Parse
+
         public static MazeValue[,] FuzzyParse(string filename, bool pathInvalid = true)
         {
-            // TODO: Implement
-            throw new NotImplementedException();
+            Bitmap img;
+            try
+            {
+                img = new Bitmap(filename);
+            }
+
+            catch (Exception)
+            {
+                throw new BadImageFormatException("Image either non existent or not in the correct format: " + filename);
+            }
+
+            return FuzzyParse(img, pathInvalid);
         }
         public static MazeValue[,] FuzzyParse(Bitmap img, bool pathInvalid = true)
         {
-            // TODO: Implement
-            throw new NotImplementedException();
+
+            MazeValue[,] maze = new MazeValue[img.Width, img.Height];
+            for (int i = 0; i < img.Width; i++)
+            {
+                for (int j = 0; j < img.Height; j++)
+                {
+                    Color pixel = img.GetPixel(i, j);
+                    if (!ColorMap.GetNearestValue(pixel.R, pixel.G, pixel.B, out maze[i, j], MAX_COLOR_DISTANCE) ||
+                        (pathInvalid && maze[i, j] == MazeValue.Path))
+                    {
+                        throw new BadImageFormatException("The image has an unrecognized color");
+                    }
+                }
+            }
+
+            return maze;
         }
+
+        #endregion
+
 
         /// <summary>
         /// This file takes the currently stored maze and generates a file from the maze
@@ -88,7 +116,8 @@ namespace Bluebeam_Maze_Solver
             {
                 for (int j = 0; j < maze.GetLength(1); j++)
                 {
-                    img.SetPixel(i, j, Color.FromArgb(ColorMap.MAPPING[maze[i, j]]));
+                    Color pixelColor = Color.FromArgb(ColorMap.MAPPING[maze[i, j]]);
+                    img.SetPixel(i, j, pixelColor);
                 }
             }
             

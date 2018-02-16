@@ -118,18 +118,24 @@ namespace MazeTester
             GC.WaitForPendingFinalizers();
 
             // Remove image copies
-            foreach (string filename in Directory.EnumerateFiles(COPY_FOLDER_PATH))
+            if (Directory.Exists(COPY_FOLDER_PATH))
             {
-                File.Delete(filename);
+                foreach (string filename in Directory.EnumerateFiles(COPY_FOLDER_PATH))
+                {
+                    File.Delete(filename);
+                }
+                Directory.Delete(COPY_FOLDER_PATH);
             }
-            Directory.Delete(COPY_FOLDER_PATH);
 
-            // Remove any output images
-            foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.OUTPUT_FOLDER))
+            if (Directory.Exists(FileSystemConstants.OUTPUT_FOLDER))
             {
-                File.Delete(filename);
+                // Remove any output images
+                foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.OUTPUT_FOLDER))
+                {
+                    File.Delete(filename);
+                }
+                Directory.Delete(FileSystemConstants.OUTPUT_FOLDER);
             }
-            Directory.Delete(FileSystemConstants.OUTPUT_FOLDER);
         }
 
         #endregion
