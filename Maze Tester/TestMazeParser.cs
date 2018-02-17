@@ -24,16 +24,32 @@ namespace MazeTester
             parseOnString = MazeParser.Parse;
             parseOnImage = MazeParser.Parse;
         }
-        [TestCleanup]
-        public void Cleanup()
+
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
         {
-            // Needed to wait for garbage collector in order to properly delete file handlers
+            if (Directory.Exists(FileSystemConstants.OUTPUT_FOLDER))
+            {
+                Cleanup();
+            }
+
+            Directory.CreateDirectory(FileSystemConstants.OUTPUT_FOLDER);
+        }
+
+        [ClassCleanup]
+        public static void Cleanup()
+        {
             GC.Collect();
             GC.WaitForPendingFinalizers();
 
-            foreach (string path in Directory.EnumerateFiles(FileSystemConstants.OUTPUT_FOLDER))
+            if (Directory.Exists(FileSystemConstants.OUTPUT_FOLDER))
             {
-                File.Delete(path);
+                // Remove any output images
+                foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.OUTPUT_FOLDER))
+                {
+                    File.Delete(filename);
+                }
+                Directory.Delete(FileSystemConstants.OUTPUT_FOLDER);
             }
         }
 

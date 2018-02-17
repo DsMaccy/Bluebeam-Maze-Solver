@@ -8,6 +8,35 @@ namespace MazeTester
     [TestClass]
     public class TestFuzzyParser : TestMazeParser
     {
+        [ClassInitialize]
+        public static new void Initialize(TestContext context)
+        {
+            if (Directory.Exists(FileSystemConstants.OUTPUT_FOLDER))
+            {
+                Cleanup();
+            }
+
+            Directory.CreateDirectory(FileSystemConstants.OUTPUT_FOLDER);
+        }
+
+        [ClassCleanup]
+        public static new void Cleanup()
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            if (Directory.Exists(FileSystemConstants.OUTPUT_FOLDER))
+            {
+                // Remove any output images
+                foreach (string filename in Directory.EnumerateFiles(FileSystemConstants.OUTPUT_FOLDER))
+                {
+                    File.Delete(filename);
+                }
+                Directory.Delete(FileSystemConstants.OUTPUT_FOLDER);
+            }
+        }
+
+
         public TestFuzzyParser()
         {
             parseOnString = MazeParser.FuzzyParse;
