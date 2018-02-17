@@ -141,11 +141,11 @@ namespace MazeTester
         public void TestParseEmptyImage()
         {
             Random rngesus = new Random();
-            string output_file = Path.Combine(FileSystemConstants.OUTPUT_FOLDER, "tmp_empty.bmp");
-            File.Create(output_file).Close();
+            string outputFile = Path.Combine(FileSystemConstants.OUTPUT_FOLDER, "tmp_empty.bmp");
+            File.Create(outputFile).Close();
             try
             {
-                MazeValue[,] maze = parseOnString(output_file);
+                MazeValue[,] maze = parseOnString(outputFile);
                 Assert.Fail();
             }
             catch(BadImageFormatException)

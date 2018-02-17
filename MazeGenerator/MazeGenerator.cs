@@ -21,8 +21,8 @@ namespace MazeGenerator
 
         private Bitmap image;
         private int expectedShortestPath;
-        private int start_x, start_y;
-        private int end_x, end_y;
+        private int startX, startY;
+        private int endX, endY;
         private const int REGION_WIDTH = 4;
 
 
@@ -104,13 +104,13 @@ namespace MazeGenerator
             Random rngesus = new Random();
             
             
-            start_x = rngesus.Next(REGION_WIDTH / 2, image.Width - REGION_WIDTH / 2 - 1);
-            start_y = rngesus.Next(REGION_WIDTH / 2, image.Height - REGION_WIDTH / 2 - 1);
+            startX = rngesus.Next(REGION_WIDTH / 2, image.Width - REGION_WIDTH / 2 - 1);
+            startY = rngesus.Next(REGION_WIDTH / 2, image.Height - REGION_WIDTH / 2 - 1);
             do
             {
-                end_x = rngesus.Next(REGION_WIDTH / 2, image.Width - REGION_WIDTH / 2 - 1);
-                end_y = rngesus.Next(REGION_WIDTH / 2, image.Height - REGION_WIDTH / 2 - 1);
-            } while (end_x == start_x && end_y == start_y);
+                endX = rngesus.Next(REGION_WIDTH / 2, image.Width - REGION_WIDTH / 2 - 1);
+                endY = rngesus.Next(REGION_WIDTH / 2, image.Height - REGION_WIDTH / 2 - 1);
+            } while (endX == startX && endY == startY);
 
 
 
@@ -119,8 +119,8 @@ namespace MazeGenerator
                 for (int j = -REGION_WIDTH / 2; j < REGION_WIDTH / 2; j++)
                 {
                     Console.WriteLine(i + " " + j);
-                    Console.WriteLine(start_x + " " + start_y);
-                    image.SetPixel(start_x + i, start_y + j, Color.Blue);
+                    Console.WriteLine(startX + " " + startY);
+                    image.SetPixel(startX + i, startY + j, Color.Blue);
                 }
             }
 
@@ -128,9 +128,9 @@ namespace MazeGenerator
             {
                 for (int j = -REGION_WIDTH / 2; j < REGION_WIDTH / 2; j++)
                 {
-                    Console.WriteLine(end_x + " " + end_y);
-                    Console.WriteLine(start_x + " " + start_y);
-                    image.SetPixel(end_x + i, end_y + j, Color.Red);
+                    Console.WriteLine(endX + " " + endY);
+                    Console.WriteLine(startX + " " + startY);
+                    image.SetPixel(endX + i, endY + j, Color.Red);
                 }
             }
         }
@@ -147,7 +147,7 @@ namespace MazeGenerator
             Random rngesus = new Random();
             do
             {
-                curr = new Point(start_x, start_y);
+                curr = new Point(startX, startY);
                 prev = curr;
                 visited = new bool[image.Width, image.Height];
                 path = new List<Point>();
@@ -189,12 +189,12 @@ namespace MazeGenerator
                         sumCount += 1;
 
                         // More heavily weight the values that are in the
-                        if ((p.X - curr.X) * (end_x - curr.X) > 0)
+                        if ((p.X - curr.X) * (endX - curr.X) > 0)
                         {
                             sumCount += CORRECT_DIRECTION_WEIGHT_MODIFIER;
                             individualCounts[i] += CORRECT_DIRECTION_WEIGHT_MODIFIER;
                         }
-                        if ((p.Y - curr.Y) * (end_y - curr.Y) > 0)
+                        if ((p.Y - curr.Y) * (endY - curr.Y) > 0)
                         {
                             sumCount += CORRECT_DIRECTION_WEIGHT_MODIFIER;
                             individualCounts[i] += CORRECT_DIRECTION_WEIGHT_MODIFIER;
@@ -245,7 +245,7 @@ namespace MazeGenerator
 
             // Skip by two in each direction to get to the center of each grid cell
             Random rngesus = new Random();
-            bool forward_pass = true;
+            bool forwardPass = true;
             for (int i = 1; i < image.Width; i += 2)
             {
                 for (int j = 1; j < image.Height; j += 2)
@@ -258,7 +258,7 @@ namespace MazeGenerator
                             image.SetPixel(i + 1, j, Color.White);
                         }
                     }
-                    if (forward_pass)
+                    if (forwardPass)
                     {
                         if (roll >= SINGLE_SIDE_PROBABILITY && roll < (PROB_SUM - NEITHER_PROBABILITY) && j + 2 < image.Height)
                         {
@@ -279,7 +279,7 @@ namespace MazeGenerator
                         }
                     }
                 }
-                forward_pass = !forward_pass;
+                forwardPass = !forwardPass;
             }
         }
 

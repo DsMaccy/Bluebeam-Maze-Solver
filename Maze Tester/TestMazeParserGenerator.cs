@@ -43,47 +43,40 @@ namespace MazeTester
         {
             Random rngesus = new Random();
             MazeValue[,] maze = new MazeValue[0, 0]; 
-            string output_file = Path.Combine(FileSystemConstants.OUTPUT_FOLDER, "tmp_empty.bmp");
-            Assert.IsFalse(MazeParser.GenerateFile(maze, output_file));
+            string outputFile = Path.Combine(FileSystemConstants.OUTPUT_FOLDER, "tmp_empty.bmp");
+            Assert.IsFalse(MazeParser.GenerateFile(maze, outputFile));
         }
 
         [TestMethod]
         public void TestGenerateInvalidImagePath()
         {
             Random rngesus = new Random();
-            string output_file = Path.Combine(FileSystemConstants.OUTPUT_FOLDER, "tmp_invalid_path.bmp");
-            File.Create(output_file).Close();
-            try
+            string outputFile = Path.Combine(FileSystemConstants.OUTPUT_FOLDER, "tmp_invalid_path.bmp");
+            File.Create(outputFile).Close();
+            int width = 10;
+
+            MazeValue[,] maze = new MazeValue[width, width];
+            for (int i = 0; i < width; i++)
             {
-                int width = 10;
-
-                MazeValue[,] maze = new MazeValue[width, width];
-                for (int i = 0; i < width; i++)
+                for (int j = 0; j < width; j++)
                 {
-                    for (int j = 0; j < width; j++)
-                    {
-                        maze[i, j] = MazeValue.Wall;
-                    }
-                }
-                
-                // Make sure the GenerateFile function returns false if file already exists
-                Assert.IsFalse(MazeParser.GenerateFile(maze, output_file));
-
-                // Make sure the file has not changed (is empty)
-                Assert.IsTrue(File.ReadAllBytes(output_file).Length == 0);
-                try
-                {
-                    Bitmap image = new Bitmap(output_file);
-                    Assert.Fail();
-                }
-                catch (ArgumentException)
-                {
-                    // Pass
+                    maze[i, j] = MazeValue.Wall;
                 }
             }
-            finally
+                
+            // Make sure the GenerateFile function returns false if file already exists
+            Assert.IsFalse(MazeParser.GenerateFile(maze, outputFile));
+
+            // Make sure the file has not changed (is empty)
+            Assert.IsTrue(File.ReadAllBytes(outputFile).Length == 0);
+            try
             {
-                //File.Delete(output_file);
+                Bitmap image = new Bitmap(outputFile);
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            {
+                // Pass
             }
         }
 
@@ -120,7 +113,7 @@ namespace MazeTester
             {
                 int width = rngesus.Next(75, 100);
                 int height = rngesus.Next(75, 100);
-                string output_file = Path.Combine(FileSystemConstants.OUTPUT_FOLDER, "tmp_" + 
+                string outputFile = Path.Combine(FileSystemConstants.OUTPUT_FOLDER, "tmp_" + 
                                                   test_num + fileExtension);
 
                 // Create maze
@@ -133,13 +126,13 @@ namespace MazeTester
                     }
                 }
 
-                Assert.IsTrue(MazeParser.GenerateFile(maze, output_file));
+                Assert.IsTrue(MazeParser.GenerateFile(maze, outputFile));
 
                 // Use the fuzzy parser on jpeg images
                 MazeValue[,] mazeFromFile;
                 if (!useFuzzy)
                 {
-                    mazeFromFile = MazeParser.Parse(output_file, false);
+                    mazeFromFile = MazeParser.Parse(outputFile, false);
                     Assert.IsTrue(CheckMazeEquality(maze, mazeFromFile));
                 }
                 else

@@ -13,7 +13,7 @@ namespace Bluebeam_Maze_Solver.Solvers
     public class BasicSolver : MazeSolver
     {
 
-        private void add_neighbors(ref MazeValue[,] maze, ref Queue<Point> points, ref int[,] distance, ref Point[,] previous, Point currentPoint)
+        private void AddNeighbors(ref MazeValue[,] maze, ref Queue<Point> points, ref int[,] distance, ref Point[,] previous, Point currentPoint)
         {
             int currentDistance = distance[currentPoint.X, currentPoint.Y];
 
@@ -70,7 +70,7 @@ namespace Bluebeam_Maze_Solver.Solvers
         private void BFS(ref MazeValue[,] maze, Point startingPoint, ref int[,] distance, ref Point[,] previous) //, out List<Point> nearbyStartingPoints)
         {
             Queue<Point> points = new Queue<Point>(maze.GetLength(0) * maze.GetLength(1));
-            add_neighbors(ref maze, ref points, ref distance, ref previous, startingPoint);
+            AddNeighbors(ref maze, ref points, ref distance, ref previous, startingPoint);
             while (points.Count > 0)
             {
                 Point currentPoint = points.Dequeue();
@@ -81,7 +81,7 @@ namespace Bluebeam_Maze_Solver.Solvers
                     case MazeValue.End:
                         return;
                     case MazeValue.OpenSpace:
-                        add_neighbors(ref maze, ref points, ref distance, ref previous, currentPoint);
+                        AddNeighbors(ref maze, ref points, ref distance, ref previous, currentPoint);
                         break;
                     case MazeValue.Start:
                     case MazeValue.Wall:
@@ -93,34 +93,34 @@ namespace Bluebeam_Maze_Solver.Solvers
             }
         }
 
-        private void FindStartAndEndPoints(ref MazeValue[,] maze, out List<Point> starting_points, out List<Point> ending_points)
+        private void FindStartAndEndPoints(ref MazeValue[,] maze, out List<Point> startingPoints, out List<Point> endingPoints)
         {
-            starting_points = new List<Point>();
-            ending_points = new List<Point>();
+            startingPoints = new List<Point>();
+            endingPoints = new List<Point>();
             for (int i = 0; i < maze.GetLength(0); i++)
             {
                 for (int j = 0; j < maze.GetLength(1); j++)
                 {
                     if (maze[i, j] == MazeValue.Start)
                     {
-                        bool all_neighbors_are_starting_points = (i == 0 || maze[i - 1, j] == MazeValue.Start) &&
+                        bool allNeighborsAreStaringPoints = (i == 0 || maze[i - 1, j] == MazeValue.Start) &&
                                                                  (j == 0 || maze[i, j - 1] == MazeValue.Start) &&
                                                                  (i + 1 >= maze.GetLength(0) || maze[i + 1, j] == MazeValue.Start) &&
                                                                  (j + 1 >= maze.GetLength(1) || maze[i, j + 1] == MazeValue.Start);
-                        if (!all_neighbors_are_starting_points)
+                        if (!allNeighborsAreStaringPoints)
                         {
-                            starting_points.Add(new Point(i, j));
+                            startingPoints.Add(new Point(i, j));
                         }
                     }
                     else if (maze[i, j] == MazeValue.End)
                     {
-                        bool all_neighbors_are_ending_points = (i == 0 || maze[i - 1, j] == MazeValue.End) &&
+                        bool allNeighborsAreEndingPoints = (i == 0 || maze[i - 1, j] == MazeValue.End) &&
                                                                (j == 0 || maze[i, j - 1] == MazeValue.End) &&
                                                                (i + 1 >= maze.GetLength(0) || maze[i + 1, j] == MazeValue.End) &&
                                                                (j + 1 >= maze.GetLength(1) || maze[i, j + 1] == MazeValue.End);
-                        if (!all_neighbors_are_ending_points)
+                        if (!allNeighborsAreEndingPoints)
                         {
-                            ending_points.Add(new Point(i, j));
+                            endingPoints.Add(new Point(i, j));
                         }
                     }
                 }
@@ -143,31 +143,31 @@ namespace Bluebeam_Maze_Solver.Solvers
             }
 
             // Find and initialize start and end points
-            List<Point> starting_points, ending_points;
-            FindStartAndEndPoints(ref maze, out starting_points, out ending_points);
-            foreach (Point point in starting_points)
+            List<Point> startingPoints, endingPoints;
+            FindStartAndEndPoints(ref maze, out startingPoints, out endingPoints);
+            foreach (Point point in startingPoints)
             {
                 distance[point.X, point.Y] = 0;
             }
 
             // Run BFS for all the starting points
-            foreach (Point point in starting_points)
+            foreach (Point point in startingPoints)
             {
-                BFS(ref maze, point, ref distance, ref previous); //, out connected_starters);
+                BFS(ref maze, point, ref distance, ref previous);
             }
 
             // Find the closest end point and backtrace until a starting point is found
-            int min_distance = int.MaxValue;
+            int minDistance = int.MaxValue;
             Point closestEndPoint = new Point();
-            foreach (Point point in ending_points)
+            foreach (Point point in endingPoints)
             {
-                if (distance[point.X, point.Y] < min_distance)
+                if (distance[point.X, point.Y] < minDistance)
                 {
-                    min_distance = distance[point.X, point.Y];
+                    minDistance = distance[point.X, point.Y];
                     closestEndPoint = point;
                 }
             }
-            if (min_distance == int.MaxValue)
+            if (minDistance == int.MaxValue)
             {
                 return false;
             }

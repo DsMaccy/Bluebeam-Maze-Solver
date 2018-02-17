@@ -14,15 +14,15 @@ namespace Bluebeam_Maze_Solver
                 ErrorHandler.PrintUsage();
                 return (int)ExitCode.GOOD;
             }
-            string source_file_name = args[0];
-            string destination_file_name = args[1];
+            string sourceFileName = args[0];
+            string destinationFileName = args[1];
 
-            if (!File.Exists(source_file_name))
+            if (!File.Exists(sourceFileName))
             {
                 ErrorHandler.HandleError(ExitCode.BAD_INPUT);
                 return (int)ExitCode.BAD_INPUT;
             }
-            if (File.Exists(destination_file_name))
+            if (File.Exists(destinationFileName))
             {
                 ErrorHandler.HandleError(ExitCode.INVALID_OUTPUT_PATH);
                 return (int)ExitCode.INVALID_OUTPUT_PATH;
@@ -30,16 +30,16 @@ namespace Bluebeam_Maze_Solver
 
             try
             {
-                MazeValue[,] maze = MazeParser.Parse(source_file_name);
+                MazeValue[,] maze = MazeParser.Parse(sourceFileName);
                 MazeSolver solver = new Solvers.BasicSolver();
-                bool solution_found = solver.solve(ref maze);
-                if (!solution_found)
+                bool solutionFound = solver.solve(ref maze);
+                if (!solutionFound)
                 {
                     ErrorHandler.HandleError(ExitCode.UNSOLVEABLE);
                     return (int)ExitCode.UNSOLVEABLE;
                 }
 
-                if (MazeParser.GenerateFile(maze, destination_file_name))
+                if (MazeParser.GenerateFile(maze, destinationFileName))
                 {
                     Console.WriteLine("Solution maze has been successfully created.");
                     return (int)ExitCode.GOOD;

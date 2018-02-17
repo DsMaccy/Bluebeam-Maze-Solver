@@ -134,31 +134,31 @@ namespace MazeTester
         [TestMethod]
         public void TestKnownMazes()
         {
-            List<string> unprocessed_files = new List<string>();
+            List<string> unprocessedFiles = new List<string>();
             foreach (string filepath in Directory.EnumerateFiles(FileSystemConstants.KNOWN_SOLUTION_MAZES_FOLDER))
             {
                 string filename = Path.GetFileName(filepath);
-                string name_without_extension = filename.Substring(0, filename.IndexOf('.'));
-                int expected_result;
-                if (int.TryParse(name_without_extension, out expected_result))
+                string nameWithoutExtension = filename.Substring(0, filename.IndexOf('.'));
+                int expectedResult;
+                if (int.TryParse(nameWithoutExtension, out expectedResult))
                 {
                     MazeValue[,] maze = MazeParser.Parse(filepath);
                     solver.solve(ref maze);
 
                     int result = CheckMaze(maze);
-                    Assert.AreEqual(expected_result, result);
+                    Assert.AreEqual(expectedResult, result);
                 }
                 else
                 {
-                    unprocessed_files.Add(filename);
+                    unprocessedFiles.Add(filename);
                 }
 
             }
 
-            if (unprocessed_files.Count > 0)
+            if (unprocessedFiles.Count > 0)
             {
                 Console.WriteLine("The following files were not processed");
-                foreach (string filename in unprocessed_files)
+                foreach (string filename in unprocessedFiles)
                 {
                     Console.WriteLine("\t" + filename);
                 }
@@ -169,18 +169,18 @@ namespace MazeTester
 
         protected int CheckMaze(Bluebeam_Maze_Solver.MazeValue[,] maze)
         {
-            int path_count = 0;
+            int pathCount = 0;
             int width = maze.GetLength(0);
             int height = maze.GetLength(1);
-            bool start_neighbor_found = false;
-            bool end_neighbor_found = false;
+            bool startNeighborFound = false;
+            bool endNeighborFound = false;
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {
                     if (maze[i, j] == MazeValue.Path)
                     {
-                        path_count++;
+                        pathCount++;
                         bool hasNeighborStart = (i + 1 < width && maze[i + 1, j] == MazeValue.Start) ||
                                                 (j + 1 < height && maze[i, j + 1] == MazeValue.Start) ||
                                                 (i - 1 >= 0 && maze[i - 1, j] == MazeValue.Start) ||
@@ -197,8 +197,8 @@ namespace MazeTester
                                                (j - 1 >= 0 && maze[i, j - 1] == MazeValue.Path);
 
                         Assert.IsTrue(hasNeighborPath || (hasNeighborStart && hasNeighborEnd));
-                        start_neighbor_found = start_neighbor_found || hasNeighborStart;
-                        end_neighbor_found = start_neighbor_found || hasNeighborEnd;
+                        startNeighborFound = startNeighborFound || hasNeighborStart;
+                        endNeighborFound = startNeighborFound || hasNeighborEnd;
                     }
                     else if (maze[i, j] == MazeValue.Start)
                     {
@@ -207,8 +207,8 @@ namespace MazeTester
                                               (i - 1 >= 0 && maze[i - 1, j] == MazeValue.End) ||
                                               (j - 1 >= 0 && maze[i, j - 1] == MazeValue.End);
                         
-                        start_neighbor_found = start_neighbor_found || hasNeighborEnd;
-                        end_neighbor_found = end_neighbor_found || hasNeighborEnd;
+                        startNeighborFound = startNeighborFound || hasNeighborEnd;
+                        endNeighborFound = endNeighborFound || hasNeighborEnd;
                     }
                     else if (maze[i, j] == MazeValue.End)
                     {
@@ -216,15 +216,15 @@ namespace MazeTester
                                                 (j + 1 < height && maze[i, j + 1] == MazeValue.Start) ||
                                                 (i - 1 >= 0 && maze[i - 1, j] == MazeValue.Start) ||
                                                 (j - 1 >= 0 && maze[i, j - 1] == MazeValue.Start);
-                        start_neighbor_found = start_neighbor_found || hasNeighborStart;
-                        end_neighbor_found = end_neighbor_found || hasNeighborStart;
+                        startNeighborFound = startNeighborFound || hasNeighborStart;
+                        endNeighborFound = endNeighborFound || hasNeighborStart;
                     }
                 }
             }
 
-            Assert.IsTrue(start_neighbor_found);
-            Assert.IsTrue(end_neighbor_found);
-            return path_count;
+            Assert.IsTrue(startNeighborFound);
+            Assert.IsTrue(endNeighborFound);
+            return pathCount;
         }
         protected MazeValue[,] DeepCopy(MazeValue[,] values)
         {
