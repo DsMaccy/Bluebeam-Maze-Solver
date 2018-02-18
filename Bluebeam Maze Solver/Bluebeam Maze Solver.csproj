@@ -59,9 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Solvers\CompressedSolver.cs" />
     <Compile Include="Solvers\BasicSolver.cs" />
-    <Compile Include="Solvers\DummySolver.cs" />
     <Compile Include="ErrorHandler.cs" />
     <Compile Include="ExitCodes.cs" />
     <Compile Include="MazeParser.cs" />
@@ -74,7 +72,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Solvers\MazeNodes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

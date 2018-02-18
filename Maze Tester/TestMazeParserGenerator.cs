@@ -16,11 +16,7 @@ namespace MazeTester
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            if (Directory.Exists(FileSystemConstants.OUTPUT_FOLDER))
-            {
-                Cleanup();
-            }
-
+            Cleanup();
             Directory.CreateDirectory(FileSystemConstants.OUTPUT_FOLDER);
         }
         [ClassCleanup]
@@ -29,10 +25,12 @@ namespace MazeTester
             // Needed to wait for garbage collector in order to properly delete file handlers
             GC.Collect();
             GC.WaitForPendingFinalizers();
-
-            foreach (string path in Directory.EnumerateFiles(FileSystemConstants.OUTPUT_FOLDER))
+            if (Directory.Exists(FileSystemConstants.OUTPUT_FOLDER))
             {
-                File.Delete(path);
+                foreach (string path in Directory.EnumerateFiles(FileSystemConstants.OUTPUT_FOLDER))
+                {
+                    File.Delete(path);
+                }
             }
         }
 

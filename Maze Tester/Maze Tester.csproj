@@ -55,7 +55,6 @@
   <ItemGroup>
     <Compile Include="FileSystemConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestCompressedSolver.cs" />
     <Compile Include="TestMain.cs" />
     <Compile Include="TestMazeParserGenerator.cs" />
     <Compile Include="TestMazeParser.cs" />
