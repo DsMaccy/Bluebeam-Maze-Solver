@@ -9,11 +9,11 @@ using System.IO;
 
 namespace Bluebeam_Maze_Solver
 {
-    public class MazeParser
+    public static class MazeParser
     {
         #region Private Static Members
 
-        private const float MAX_COLOR_DISTANCE = 100f;
+        private static readonly float MAX_COLOR_DISTANCE = 100f;
 
         #endregion
 

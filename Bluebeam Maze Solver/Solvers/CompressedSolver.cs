@@ -89,6 +89,7 @@ namespace Bluebeam_Maze_Solver.Solvers
         {
             startNodes = new List<MazeNode>();
             endNodes = new List<MazeNode>();
+            MazeNode[,] references = new MazeNode[maze.GetLength(0), maze.GetLength(1)];
 
             // Create Rectangle Nodes
             bool[,] added = new bool[maze.GetLength(0), maze.GetLength(1)]; 
@@ -131,6 +132,7 @@ namespace Bluebeam_Maze_Solver.Solvers
                     }
                     if (otherCorner.X != i)
                     {
+                        RectangleNode newNode = new RectangleNode();
                         // Add Rectangle Node using OtherCorner
                     }
                     else
